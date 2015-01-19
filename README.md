@@ -6,3 +6,4 @@ This is one of the usablity features from my site.   Please look at the static d
 This module is properly documented a http://owenberesford.me.uk/resource/jquery-biblio
 
 This doesn't pollute anything into the global namespace, but only one instance may be made per page.  As noted elsewhere, this applies to the page, an ignores the current selected elements.
+Files in 3rdparty are purely to run the tests, and should not be installed to any servers.
