@@ -1,0 +1,160 @@
+{{pagemeta
+|Name                = Notes on Drupal.
+|Title               = Notes on Drupal.
+|Author              = Owen Beresford
+|DocVersion          = 2.0
+|AccessGroup         = 0
+|Method              = GET
+|CodeVersion         = 2.0.0
+|Keywords            = drupal, php, cms, procedural, poor design, hooks 
+|frame				 = reach-frame
+|description		= I have read up on Drupal, here are some notes.
+}}
+{{nextresource GET
+|*
+}}
+{{html content
+<div class="blocker">
+<div class="lotsOfWords">
+<div class="pullout" style="display:none" id="notice">
+You are using a small screen, the references are at the end; with enough margin for your thumb.  
+</div>
+[[text1]]
+</div>
+<hr />
+<div class="lotsOfWords">
+[[text2]]
+</div>
+
+<div style="display:none" id="biblio">
+<hr />
+<h3><a name="biblio">Exported bibliography (UI for mobile).</a></h3>
+<p>Use jQuery to extract all &lt;SUP&gt;; inject UL, with the links, add CSS padding so can be thumbed.  Problem: Links are generated and have no meta data  look at aira attrib...</p>
+<p>Rewrite as a jQuery for reuse...</p>
+<ul>
+</ul>
+</div>
+</div>
+
+}}
+{{wiki text1
+
+There have been a number of iterations on Drupal.  My notes go back to Drupal6.  Drupal 7 added a few new features (please see [https://www.drupal.org/about/new-in-drupal-7] ); and is the "current one".  Drupal8 breaks backwards compatibility, but has finally joined the >1980s by going OO and using namespaces.  Drupal8 also supports HTML5 and mobile.  Whilst I understand inertia on big projects, I find it hard to take lack of support for these things seriously.
+There is a catalogue that lists Drupal sites [http://www.drupalsites.net/], this is useful for looking at features for Drupal.  [http://blog.drupalpartners.com/a-very-merry-drupal-holiday-poem Seasonal fluff] that showed up on my linkedin. 
+
++++ Audience
+Drupal is a CMS, mostly targeted at non-programmers who need to achieve skilled professional tasks (Content librarian is skilled language-based role, which pure technology conversations will tend to ignore.).  I have researched abit [http://www.garfieldtech.com/blog/drupal-priorities] [http://www.disambiguity.com/designing-for-the-wrong-target-audience/] [http://engineeredweb.com/blog/drupal-target-audiences/], Drupal caters for people who want to do "programming via the mouse" (I seek to avoid controversy, so am not using the standard term ).   These are the type of people who think that security is optional, and don't know enough to do high performance.  
+As far as you don't want to write the entire CMS everytime you build anther site, that is quite sensible.  If the framework did security and scalability ~ which would also make sense ~ then the weakness of the website builders isn't a problem. 
+
++++ Comparison to other CMS
+There is a service to port your site between CMSs [https://www.cms2cms.com/], although I don't know anyone using it.  
+
+Wordpress [http://en.wikipedia.org/wiki/WordPress] is a more narrow CMS, mostly just for blogs.  There is a bigger range of tools attached to wordpress, and certainly compared to Drupal6 its easier to manage.  Wordpress is still seen as stronger for non-technical users.  In Drupal7 they added a large administration module, so that weakness is gone.
+Historically another CMS was Movable type [http://en.wikipedia.org/wiki/Movable_Type].  This is written in Perl, and invented backtracks.  It seems to have been mostly replaced with Wordpress.   If you need to host an eCommerce site, an option is Magento [http://en.wikipedia.org/wiki/Magento].  This is derived from ZF1 code, but has many eCommerce features.  If you need a tool to do things like inventory management in addition to "shop" features; this is an established tool.  
+In 2012 my Facebook was flooded with repeated adverts for [http://www.wix.com/html5webbuilder/910-x-c-g Wix].  I'm not sure if they should be classified as a web hosting service, or as a CMS.  They allow websites to be created by the less-technical, within the Wix framework.  There are many other services, offering the same concept. As an artist or designer, I avoid them; conversely they are targeting people who like powerpoint.
+Another PHP CMS is Joomla [http://en.wikipedia.org/wiki/Joomla]. Blogger [http://en.wikipedia.org/wiki/Blogger_%28service%29] is for blogs, and is written in Python.  It is a rentable service only, not an installed software.  Compared to Drupal; Blogger has good mobile support, both for editing and reading sites ~ including via SMS.  There are many further projects that I haven't mentioned.  There are surveys attempting to gauge the operational userbase for each [http://w3techs.com/technologies/overview/content_management/all] [http://www.opensourcecms.com/general/cms-marketshare.php] [http://despreneur.com/cms-trends-for-2014/].  These analysis all say that Wordpress is a dominant player, having about 60% of the CMS market.  I guess there are many more blog or simple brochure sites than anything more complex.   The first link states that over sixty percent of websites do not use a CMS.  To narrow the market to just e-shops, Magento is a dominant player [http://blog.aheadworks.com/2012/09/magento-got-a-third-slice-of-pie/].   The market trending articles state that the smaller projects are collapsing (presumably Wordpress gets another plugin each time).  
+
++++ Drupal 7 features
+There are enough features to have a CMS inside Drupal core.  They are summarised [http://toasterz.com/drupal_features] [http://getlevelten.com/blog/colin/new-features-drupal-7], but enable content and site management; plus individualisation, comments, taxonomy.  As noted above the "standard edition" is v7, which is stated being TDD [http://kkovacs.eu/the-best-features-of-the-coming-drupal-7], unlike the earlier versions.  This is released with the following [https://www.drupal.org/about/new-in-drupal-7]: general updates, add RDF support, improved security model, improved UX items, and added alot of documentation.  There are a few new things like a module named "Features" created for this release.  There is a website purely for discussing UX in Drupal7 [http://www.d7ux.org] but at the point of writing this doesn't display pages. 
+One of the features added into Drupal7 as panels [http://dustinbons.com/panels-styles-plugin-drupal-7] [http://codekarate.com/daily-dose-of-drupal/drupal-7-panels-module-basics-part-1].  Their exact description is confusing; but they are pre-organised content which can be added into sites with partial WYSIWYG editing.  To create good ones requires editing source, which some people dislike ~ a critique on why not to use them [https://swsblog.stanford.edu/blog/why-not-panels].  
+Another feature is "views" [https://www.drupal.org/project/views] [https://drupalize.me/videos/overview-views?p=1144], which seem to be a DB rasterising library.  They make big use of the word "custom" to indicate that you can write your website not theirs [http://dominiquedecooman.com/drupal-7-tip-create-custom-views-access-plugin]; these do require some skills in PHP and SQL.  
+}}
+{{wiki text2
+In the move to Drupal 7, they updated to jQuery 1.4 (which now is a legacy edition), added jQuery-UI; and similarly updated a few other things.  Whilst that edition of Drupal isn't new, being locked to a version of jQuery that old will make problems.  People using Drupal approach from an entirely different perspective to me.  One of the sales things about moving to Drupal7 was the addition of drag and drop in the edit screens; so admin didn't need to learn what coordinates where.  This is been applied in a relatively coherent fashion, and is probably saving people alot of time.  Another sales feature is the availability of "features".  This is a confusing name, but a module to provide a UI to manage the deployment and config of modules [https://www.drupal.org/project/features].  
+There are videos on youtube which seems to be the preferred format for some developers.  These make poor references, and are not keyword searchable so I have skipped them.
+
++++ Performance
+As a tool for non-technical people, there are many articles about Drupal performance.  Whilst I don't doubt they are true, they are void if you have multiple degrees in IT, a decades experience, and not using Drupal.  There are some consultants selling "Drupal performance", for example [http://peterjlord.co.uk/article/web-performance-guide-building-fast-drupal-websites] [http://zoocha.com/what-we-do/drupal-web-development] [https://groups.drupal.org/node/5476].  If you are running a non-technical business this may be the easiest solution to improve existing infrastructure.
+A common thing for CMS is to cache aggressively everything that doesn't need realtime data.  In practical terms you can cache the generic HTML in a sales catalogue, the CSS, the JS; only the current stock needs to be fresh.  Similarly for news sites, only the stories change.  A convenient summary is [http://helpdesk.getpantheon.com/customer/portal/articles/408428-drupal-s-performance-settings].  The biggest thing seems to be "cache for anonymous users", which would seem to exclude Drupal from being a good sales platform.  Cache invalidation is a hard problem in IT, with respect to Drupal see [http://www.phase2technology.com/blog/caching-in-drupal/].  Drupal integrates with Varnish ~ my normal front side cache [https://fourkitchens.atlassian.net/wiki/display/TECH/Configure+Varnish+3+for+Drupal+7], [https://www.drupal.org/project/varnish], issues list [https://www.drupal.org/project/issues/varnish].  Drupal also caches its own config, which isn't going to change very often.
+As a measure for performance inside the platform, there is a hook (but using it will prove to be a challenge, see text) [https://www.drupal.org/node/1809510].  I generally favour performance monitoring outside the server, as a response time isn't just a function of the code (webserver buffering and delays, front side caches, DNS lookup delays, DB lookup delays, SSL negotiation, kernel delays, router delays).   When doing code analysis (I probably wouldn't apply this to Drupal, as you can't re-architect), one needs a higher degree of granularity than which pages are slow.
+
++++ Architecture
+As far as getting a role involving Drupal goes, architecture is what I was reading about.  The other thousand words is just context.   The basic idea behind have a strong framework for making content is a good idea; if Drupal 8 was more mature, then the fact that it is compatible with much of Symfony2 is a nice feature  The older versions of Drupal do represent everything that I am not keen about for PHP.
+
+By this far into a CMS, you have probably heard the word "hooks".  Drupal 7 and below are not OO frameworks (although there are a few objects for some things).  Functionality is achieved by triggering the event that runs the registered hooks.  Drupal users (i.e. web dev) are reminded about management problems from editing the core libraries; but may add another hook into the event with much less side effect. The hooks for Drupal 7 are listed [https://api.drupal.org/api/drupal/includes!module.inc/group/hooks/7].  As Drupal is a common platform, other people have written some documentation [http://www.enjoythearchitecture.com/drupal-architecture.html] [http://lin-clark.com/blog/2010/04/28/how-drupal-works-architects-overview-notes/].   The hooks are implemented using a rigid function naming structure and the PHP API ''function_exists''.  This is quite fast for PHP to execute, although doesn't scale that well for a large number of modules.   
+The output of Drupal is skinnable (as with many CMS), and that is controlled by themes.  Each module may define or utiltise its own or third party theme [http://robknight.org.uk/blog/2011/02/explaining-architectural-tiers-drupal/].  The menu module controls the routing i.e. which module implements a given URL.  As a walk through more than reference, this question [http://stackoverflow.com/questions/1068556/how-drupal-works] is worth reading.  There is some notes targeted at OO people [https://www.drupal.org/node/547518], for the non-OO codebase.  As with every long-lived project, there is escalating complexity; and architects attempting to solve this effect [http://buytaert.net/managing-and-measuring-drupal-core-complexity].    There are fairly few numerical performance results; but review [http://www.netstudio.gr/en/blog/early-drupal-7-vs-drupal-8-performance-comparison]. 
+
+For some things Drupal feels like a pre permanent-internet project.  Major updates are done via tarball not git update [https://api.drupal.org/api/drupal/upgrade.txt/7].  In terms of change management, this is brittle and not Agile.  I suppose Vagrant and similar are really important if your technology background is manual ''cp'' and ''tar -zxf'' commands.  They also mention ''patch'', personally I would much rather use ''git'' than patch, as its got better reversion, and better controls.   On the basis that earlier versions of Drupal had less test coverage; using ''patch'' is a very stressful solution.   
+
++++ Testing
+As I am a software engineer, I don't start using a technology; unless I can test it.  This text is avoiding Drupal8, which has proper unit tests, but is not considered useful for eCommerce yet.  Drupal people are told repeatedly "do not hack core", as the consequences will be hard to manage in the long term.  The following text feels like Drupal occurred before my lecturers wrote their notes, so has older practices.
+People do seem to realise that a big complex adaptable project may need unit tests ~ I quote "Since testing is still quite new in Drupal" [https://www.drupal.org/node/30109], they are attempting improve quality.   Testing in Drupal is complicated by the fact that there are many possible execution states [http://drupal.stackexchange.com/questions/97698/which-test-cases-tests-should-i-run], and so errors may not occur when you test.  As Drupal is a large project, they have some process [https://www.drupal.org/contributor-tasks/write-tests] [http://colans.net/blog/how-review-drupal-code] (the first is recent, it references Drupal8 everywhere..)
+
+In order to test new modules, they recommend using !SimpleTest [http://www.simpletest.org/en/unit_test_documentation.html] (I previously favour PHPunit), which I have looked at.  PHPunit has a better tool chain/ integration.  There are various notes saying that BDD/ outside-in functional tests should be done with their normal process (and therefore Behat).  For the content, people have created test modules which render the blocks or views [https://www.drupal.org/project/test_content_block] [https://api.drupal.org/api/drupal/modules!block!block.test/class/BlockTestCase/7] .   I don't know if this can be integrated into a CI tool.
+
+
+}}
+{{html extraHeader
+<script type="text/javascript" >
+"use strict";
+	
+function isMobile() {
+  try{ document.createEvent("TouchEvent"); return true; }
+  catch(e){ return false; }
+}
+// after testing move into jQuery, i think.
+// http://www.wenda.io/questions/522153/jquery-pageinit-not-firing.html
+jQuery('document').ready( function() {
+// alert("Running page init.");
+if( isMobile() || window.currentSize()[0] < 400) {
+	if(window.pageInitRun) { return; }
+	window.pageInitRun = 1;
+
+//	alert("Is mobile or a small window. "+$('sup a').length);	
+	var $ul=$('<ol id="aList_pg1" class="Alist"></ol>');
+	$('#biblio p').empty();
+	var $biblio =$('#biblio');
+	$biblio.append("<h4>Page 1 references</h4>");
+
+	$('.lotsOfWords:nth-child(1) sup a').each(function(pos, ele) {
+		var $ele = $(ele);
+
+		var t=$ele.attr('href');
+		if(t.length > 10) {
+			var bits=t.split('.');
+			var name = bits[1];
+			if(name.match(/\//)) {
+				bits=bits[0].split('/');
+				name=bits[2];				
+			}
+// look at doing a HEADER request to extract the meta "description".
+
+			$ul.append( '<li> <a href="'+t+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>');
+			$ele.attr('href', '#biblio');
+			// check the padding...
+		}
+	});
+
+	$biblio.append($ul);
+	$biblio.append("<h4>Page 2 references</h4>");
+	var $ul=$('<ol id="aList_pg2" class="Alist"></ol>');
+	
+// this hack via find() seems to be necessary inside this page.
+// I confirm: 1) the data is present as expected 2) the jQuery works 
+// I guess a consequence of the columnise
+	$($('.lotsOfWords')[1]).find('sup a').each(function(pos, ele) {
+		var $ele = $(ele);
+
+		var t=$ele.attr('href');
+		if(t.length > 10) {
+			var bits=t.split('.');
+			var name = bits[1];
+			if(name.match(/\//)) {
+				bits=bits[0].split('/');
+				name=bits[2];				
+			}
+// look at doing a HEADER request to extract the meta "description".
+
+			$ul.append( '<li> <a href="'+t+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>');
+			$ele.attr('href', '#biblio');
+			// check the padding...
+		}
+	});
+
+	$biblio.append($ul);
+	$biblio.css('display', 'block');
+	$('#notice').css('display', 'block');
+}
+});
+</script>
+}}

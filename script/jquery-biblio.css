@@ -1,0 +1,5 @@
+
+ol.Alist { width:50%; margin-left:auto; margin-right:auto; }
+ol.Alist li a { padding:5px; display:block; text-align:center;  }
+ol.Alist li a:hover {  background-color:#C0DEED; }
+
