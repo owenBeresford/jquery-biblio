@@ -141,8 +141,13 @@ Internal items, don't touch please:
 			var $ul		=$(cb.appendList.apply(this, [offset]));
 			var $biblio =$(nm);
 			var $self	=this; // sigh JS.
-			$biblio.append(cb.appendTitle.apply(this, [offset]));
+			
 
+			if($($(loss)[offset]).find(this.options.selector).length==0) {
+				$biblio.append(cb.haveEmptyPage.apply(this, [offset]));
+			} else {
+				$biblio.append(cb.appendTitle.apply(this, [offset]));
+			}
 // this hack via find() seems to be necessary inside this page.
 // I confirm: 1) the data is present as expected 2) the jQuery works 
 // I guess a consequence of the columnise module
@@ -202,7 +207,7 @@ Internal items, don't touch please:
 
 // pls see doc header 
 	$.biblioImpl.defaultOptions = {
-		debug:1,
+		debug:0,
 		type:'biblio',
 		width:400,
 		wholeURL:8,
@@ -221,6 +226,7 @@ Internal items, don't touch please:
 			appendSection:_appendBiblioTitle,
 			emptyList:_emptyList,
 			postList:_postList,
+			haveEmptyPage:_emptyPage
 				},
 		
 	};
@@ -281,13 +287,24 @@ Internal items, don't touch please:
 	}
 
 	/**
+	 * _emptyPage ~ report no links on that "page" of content
+	 * 
+	 * @param string select 
+	 * @return true
+	 */
+	function _emptyPage(select) {
+		return "<p>["+select+"] There are no references on this section.</p>";
+	}
+
+
+	/**
 	 * _appendBiblioTitle ~ generate the H4 HTML
 	 * 
 	 * @param int offset 
 	 * @return string
 	 */
 	function _appendBiblioTitle() {
-		return "<h2 class=\"biblioSection\">References (for mobile UI)</h2> <p>Te references embedded in the text are displayed here. <strike class=\"twitterLink\">Lookup extra details</strike>.</p>";
+		return "<h2 class=\"biblioSection\">References (for mobile UI)</h2> <p>Te references embedded in the text are displayed here. </p><p><strike class=\"twitterLink\">Lookup extra details</strike>.</p>";
 	}
 	
 	/**
