@@ -116,6 +116,7 @@ Internal items, don't touch please:
 					console.log("and this the first run (so will do something)..."); 
 				}
 				this.options.callbacks.emptyList.apply(this, [this.options.gainingElement ]);
+				$(this.options.gainingElement).append( this.options.callbacks.appendSection.apply(this, [ ]));
 				LENGTH=$(this.options.loosingElement).length;
 				for( i=0; i<LENGTH; i++) {
 					this._build1Page(i);
@@ -209,12 +210,15 @@ Internal items, don't touch please:
 		selector:'sup a',
 		gainingElement:'#biblio',
 		loosingElement:'.lotsOfWords',
+		tocElement:'fieldset.h4_menu > .h4_lean',
+		tocEdit:0,
 		pageInitRun:0,
 		callbacks:{
 			appendLi:_appendLi,
 			appendList:_appendList,
 			neuterLink:_neuterLink,
 			appendTitle:_appendTitle,
+			appendSection:_appendBiblioTitle,
 			emptyList:_emptyList,
 			postList:_postList,
 				},
@@ -275,6 +279,16 @@ Internal items, don't touch please:
 		$(select).attr('href', this.options.gainingElement);
 		return true;
 	}
+
+	/**
+	 * _appendBiblioTitle ~ generate the H4 HTML
+	 * 
+	 * @param int offset 
+	 * @return string
+	 */
+	function _appendBiblioTitle() {
+		return "<h2 class=\"biblioSection\">References (for mobile UI)</h2> <p>Te references embedded in the text are displayed here. <strike class=\"twitterLink\">Lookup extra details</strike>.</p>";
+	}
 	
 	/**
 	 * _appendTitle ~ generate the H4 HTML
@@ -307,10 +321,36 @@ Internal items, don't touch please:
 	 */
 	function _postList(select) {
 		$(select).css('display', 'block');
-// IOIO I am hacking the TOC here...
+		if(this.options.tocEdit ) {
+			var $toc = $(this.options.tocElement);
+			var odd=$toc.children().length-1;
+			var html = _hiddenLiBuilder($(this.options.gainingElement+' h2.biblioSection').text(), odd);
+			$toc.append(html);
+			odd++;
+
+			var $list= $(this.options.gainingElement+" h4");
+			for(var i=0; i< $list.length; i++ ) {
+				html= _hiddenLiBuilder( $($list[i]).text(), odd);	
+				$toc.append(html);
+				odd++;
+			}
+			$toc.css('overflow-y', 'scroll');
+			$toc.parent().css('overflow-y', 'hidden');
+		}
 		return true;
 	}
 
+	function _hiddenLiBuilder(text, odd) {
+		var html;
+		if(odd % 2) {
+			html="<li class=\"h4_odd\">";
+		} else {
+			html="<li>" ;
+		}
+		html    +=text;
+		html	+="</li>";
+		return html;
+	}
 
 	/**
 	 * _downloadExtra ~ NOIMPL

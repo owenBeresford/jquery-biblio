@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en-GB-oed" class="ie6 noJS"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-GB-oed" class="ie7 noJS"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-GB-oed" class="ie8 noJS"> <![endif]-->
+<!--[if IE 9]>         <html lang="en-GB-oed" class="ie9 noJS"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en-GB-oed" class="noJS"> <!--<![endif]-->
+<head>
+<!-- This website is written by a guy who claims to have lots of specialised technical skills, but this website only partially demonstrates them.  This website is a vehicle for about 100,000 words, please read some of them. -->
+<title>Unit test for jQuery-biblio.</title>
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB-oed" />
+<meta name="Author" content="Owen Beresford" />
+<meta name="Description" content="I have read up on Drupal, here are some notes." />
+
+<link rel="stylesheet" type="text/css" href="http://owenberesford.me.uk/resource/reach-positional" />
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-1.11.1" ></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
+<script type="text/javascript" src="../script/jquery-biblio.js"></script>
+<script type="text/javascript" src="../3rdparty/qunit-1.11.0.js" ></script>
+<link rel="stylesheet" type="text/css" href="../3rdparty/qunit-1.11.0.css" />
+<script type="text/javascript" >
+function biblio_test() {
+	return test("API test for jQuery-biblio", test_impl);	
+}
+
+function test_impl() {
+	"use strict";
+	var opts={
+			debug:1,	
+			tocEdit:1,
+			width:1500,
+				};
+	expect(6);
+// add config from here
+// http://api.qunitjs.com/QUnit.config/
+	
+	ok( typeof jQuery.fn.biblio ==='function', "module loaded");
+	ok( jQuery().jquery === '1.11.1', "jquery loaded");
+
+// pls note this is called in a completely different fashion to the first test script
+	var countOL=$('#biblio ol').length;
+	var countH=$('#biblio h4').length;
+	var countLI=$('fieldset.h4_menu > .h4_lean li').length;
+
+	var $unit = $(document).biblio( opts);
+
+	ok( typeof $unit ==='object', "Have an object" );
+	ok(countOL < $('#biblio ol').length, "Code made at least one OL" );
+	ok(countH < $('#biblio h4').length, "Code made at least one H4" );
+	ok(countLI < $('fieldset.h4_menu > .h4_lean li').length, "Code made at least one LI" );
+	
+
+// further tests are best done via the static demo.
+// can't test hidden callbacks, as they are hidden
+//
+//would like to add tests for a variety of input documents.
+// 'cus that is likely to break things
+}
+
+$('document').ready(biblio_test);
+</script>
+
+</head>
+<body id="body">
+<div class="h4_page">
+<div class="after_menu">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<article>
+<div class="blocker">
+<div class="lotsOfWords">
+<div class="pullout" id="notice">
+<h3>Qunit biblio unit-test.</h3> 
+  Please refer to the actual <a href="./static.html" title="Load the real unit test,">static demo</a>, and the <a href="http://owenberesford.me.uk/resource/jquery-biblio" title="goto the dev notes article for this project." >dev notes</a> article.  
+</div>
+<p>There have been a number of iterations on Drupal.  My notes go back to Drupal6.  Drupal 7 added a few new features (please see <sup><a href="https://www.drupal.org/about/new-in-drupal-7" target="_blank">1</a></sup> ); and is the “current one”.  Drupal8 breaks backwards compatibility, but has finally joined the &gt;1980s by going OO and using namespaces.  Drupal8 also supports HTML5 and mobile.  Whilst I understand inertia on big projects, I find it hard to take lack of support for these things seriously.<br />
+There is a catalogue that lists Drupal sites <sup><a href="http://www.drupalsites.net/" target="_blank">2</a></sup>, this is useful for looking at features for Drupal.  <a href="http://blog.drupalpartners.com/a-very-merry-drupal-holiday-poem" target="_blank">Seasonal fluff</a> that showed up on my linkedin.</p>
+
+
+<h3 id="toc0"> Audience</h3>
+<p>Drupal is a CMS, mostly targeted at non-programmers who need to achieve skilled professional tasks (Content librarian is skilled language-based role, which pure technology conversations will tend to ignore.).  I have researched abit <sup><a href="http://www.garfieldtech.com/blog/drupal-priorities" target="_blank">3</a></sup> <sup><a href="http://www.disambiguity.com/designing-for-the-wrong-target-audience/" target="_blank">4</a></sup> <sup><a href="http://engineeredweb.com/blog/drupal-target-audiences/" target="_blank">5</a></sup>, Drupal caters for people who want to do “programming via the mouse” (I seek to avoid controversy, so am not using the standard term ).   These are the type of people who think that security is optional, and don't know enough to do high performance.  <br />
+As far as you don't want to write the entire CMS everytime you build anther site, that is quite sensible.  If the framework did security and scalability ~ which would also make sense ~ then the weakness of the website builders isn't a problem.</p>
+
+
+<h3 id="toc1"> Comparison to other CMS</h3>
+<p>There is a service to port your site between CMSs <sup><a href="https://www.cms2cms.com/" target="_blank">6</a></sup>, although I don't know anyone using it.</p>
+
+<p>Wordpress <sup><a href="http://en.wikipedia.org/wiki/WordPress" target="_blank">7</a></sup> is a more narrow CMS, mostly just for blogs.  There is a bigger range of tools attached to wordpress, and certainly compared to Drupal6 its easier to manage.  Wordpress is still seen as stronger for non-technical users.  In Drupal7 they added a large administration module, so that weakness is gone.<br />
+Historically another CMS was Movable type <sup><a href="http://en.wikipedia.org/wiki/Movable_Type" target="_blank">8</a></sup>.  This is written in Perl, and invented backtracks.  It seems to have been mostly replaced with Wordpress.   If you need to host an eCommerce site, an option is Magento <sup><a href="http://en.wikipedia.org/wiki/Magento" target="_blank">9</a></sup>.  This is derived from ZF1 code, but has many eCommerce features.  If you need a tool to do things like inventory management in addition to “shop” features; this is an established tool.  <br />
+In 2012 my Facebook was flooded with repeated adverts for <a href="http://www.wix.com/html5webbuilder/910-x-c-g" target="_blank">Wix</a>.  I'm not sure if they should be classified as a web hosting service, or as a CMS.  They allow websites to be created by the less-technical, within the Wix framework.  There are many other services, offering the same concept. As an artist or designer, I avoid them; conversely they are targeting people who like powerpoint.<br />
+Another PHP CMS is Joomla <sup><a href="http://en.wikipedia.org/wiki/Joomla" target="_blank">10</a></sup>. Blogger <sup><a href="http://en.wikipedia.org/wiki/Blogger_%28service%29" target="_blank">11</a></sup> is for blogs, and is written in Python.  It is a rentable service only, not an installed software.  Compared to Drupal; Blogger has good mobile support, both for editing and reading sites ~ including via SMS.  There are many further projects that I haven't mentioned.  There are surveys attempting to gauge the operational userbase for each <sup><a href="http://w3techs.com/technologies/overview/content_management/all" target="_blank">12</a></sup> <sup><a href="http://www.opensourcecms.com/general/cms-marketshare.php" target="_blank">13</a></sup> <sup><a href="http://despreneur.com/cms-trends-for-2014/" target="_blank">14</a></sup>.  These analysis all say that Wordpress is a dominant player, having about 60% of the CMS market.  I guess there are many more blog or simple brochure sites than anything more complex.   The first link states that over sixty percent of websites do not use a CMS.  To narrow the market to just e-shops, Magento is a dominant player <sup><a href="http://blog.aheadworks.com/2012/09/magento-got-a-third-slice-of-pie/" target="_blank">15</a></sup>.   The market trending articles state that the smaller projects are collapsing (presumably Wordpress gets another plugin each time).</p>
+
+
+<h3 id="toc2"> Drupal 7 features</h3>
+<p>There are enough features to have a CMS inside Drupal core.  They are summarised <sup><a href="http://toasterz.com/drupal_features" target="_blank">16</a></sup> <sup><a href="http://getlevelten.com/blog/colin/new-features-drupal-7" target="_blank">17</a></sup>, but enable content and site management; plus individualisation, comments, taxonomy.  As noted above the “standard edition” is v7, which is stated being TDD <sup><a href="http://kkovacs.eu/the-best-features-of-the-coming-drupal-7" target="_blank">18</a></sup>, unlike the earlier versions.  This is released with the following <sup><a href="https://www.drupal.org/about/new-in-drupal-7" target="_blank">19</a></sup>: general updates, add RDF support, improved security model, improved UX items, and added alot of documentation.  There are a few new things like a module named “Features” created for this release.  There is a website purely for discussing UX in Drupal7 <sup><a href="http://www.d7ux.org" target="_blank">20</a></sup> but at the point of writing this doesn't display pages. <br />
+One of the features added into Drupal7 as panels <sup><a href="http://dustinbons.com/panels-styles-plugin-drupal-7" target="_blank">21</a></sup> <sup><a href="http://codekarate.com/daily-dose-of-drupal/drupal-7-panels-module-basics-part-1" target="_blank">22</a></sup>.  Their exact description is confusing; but they are pre-organised content which can be added into sites with partial WYSIWYG editing.  To create good ones requires editing source, which some people dislike ~ a critique on why not to use them <sup><a href="https://swsblog.stanford.edu/blog/why-not-panels" target="_blank">23</a></sup>.  <br />
+Another feature is “views” <sup><a href="https://www.drupal.org/project/views" target="_blank">24</a></sup> <sup><a href="https://drupalize.me/videos/overview-views?p=1144" target="_blank">25</a></sup>, which seem to be a DB rasterising library.  They make big use of the word “custom” to indicate that you can write your website not theirs <sup><a href="http://dominiquedecooman.com/drupal-7-tip-create-custom-views-access-plugin" target="_blank">26</a></sup>; these do require some skills in PHP and SQL.</p>
+
+
+</div>
+<hr />
+<div class="lotsOfWords">
+<p>In the move to Drupal 7, they updated to jQuery 1.4 (which now is a legacy edition), added jQuery-UI; and similarly updated a few other things.  Whilst that edition of Drupal isn't new, being locked to a version of jQuery that old will make problems.  People using Drupal approach from an entirely different perspective to me.  One of the sales things about moving to Drupal7 was the addition of drag and drop in the edit screens; so admin didn't need to learn what coordinates where.  This is been applied in a relatively coherent fashion, and is probably saving people alot of time.  Another sales feature is the availability of “features”.  This is a confusing name, but a module to provide a UI to manage the deployment and config of modules <sup><a href="https://www.drupal.org/project/features" target="_blank">1</a></sup>.  <br />
+There are videos on youtube which seems to be the preferred format for some developers.  These make poor references, and are not keyword searchable so I have skipped them.</p>
+
+
+<h3 id="toc3"> Performance</h3>
+<p>As a tool for non-technical people, there are many articles about Drupal performance.  Whilst I don't doubt they are true, they are void if you have multiple degrees in IT, a decades experience, and not using Drupal.  There are some consultants selling “Drupal performance”, for example <sup><a href="http://peterjlord.co.uk/article/web-performance-guide-building-fast-drupal-websites" target="_blank">2</a></sup> <sup><a href="http://zoocha.com/what-we-do/drupal-web-development" target="_blank">3</a></sup> <sup><a href="https://groups.drupal.org/node/5476" target="_blank">4</a></sup>.  If you are running a non-technical business this may be the easiest solution to improve existing infrastructure.<br />
+A common thing for CMS is to cache aggressively everything that doesn't need realtime data.  In practical terms you can cache the generic HTML in a sales catalogue, the CSS, the JS; only the current stock needs to be fresh.  Similarly for news sites, only the stories change.  A convenient summary is <sup><a href="http://helpdesk.getpantheon.com/customer/portal/articles/408428-drupal-s-performance-settings" target="_blank">5</a></sup>.  The biggest thing seems to be “cache for anonymous users”, which would seem to exclude Drupal from being a good sales platform.  Cache invalidation is a hard problem in IT, with respect to Drupal see <sup><a href="http://www.phase2technology.com/blog/caching-in-drupal/" target="_blank">6</a></sup>.  Drupal integrates with Varnish ~ my normal front side cache <sup><a href="https://fourkitchens.atlassian.net/wiki/display/TECH/Configure+Varnish+3+for+Drupal+7" target="_blank">7</a></sup>, <sup><a href="https://www.drupal.org/project/varnish" target="_blank">8</a></sup>, issues list <sup><a href="https://www.drupal.org/project/issues/varnish" target="_blank">9</a></sup>.  Drupal also caches its own config, which isn't going to change very often.<br />
+As a measure for performance inside the platform, there is a hook (but using it will prove to be a challenge, see text) <sup><a href="https://www.drupal.org/node/1809510" target="_blank">10</a></sup>.  I generally favour performance monitoring outside the server, as a response time isn't just a function of the code (webserver buffering and delays, front side caches, DNS lookup delays, DB lookup delays, SSL negotiation, kernel delays, router delays).   When doing code analysis (I probably wouldn't apply this to Drupal, as you can't re-architect), one needs a higher degree of granularity than which pages are slow.</p>
+
+
+<h3 id="toc4"> Architecture</h3>
+<p>As far as getting a role involving Drupal goes, architecture is what I was reading about.  The other thousand words is just context.   The basic idea behind have a strong framework for making content is a good idea; if Drupal 8 was more mature, then the fact that it is compatible with much of Symfony2 is a nice feature  The older versions of Drupal do represent everything that I am not keen about for PHP.</p>
+
+<p>By this far into a CMS, you have probably heard the word “hooks”.  Drupal 7 and below are not OO frameworks (although there are a few objects for some things).  Functionality is achieved by triggering the event that runs the registered hooks.  Drupal users (i.e. web dev) are reminded about management problems from editing the core libraries; but may add another hook into the event with much less side effect. The hooks for Drupal 7 are listed <sup><a href="https://api.drupal.org/api/drupal/includes!module.inc/group/hooks/7" target="_blank">11</a></sup>.  As Drupal is a common platform, other people have written some documentation <sup><a href="http://www.enjoythearchitecture.com/drupal-architecture.html" target="_blank">12</a></sup> <sup><a href="http://lin-clark.com/blog/2010/04/28/how-drupal-works-architects-overview-notes/" target="_blank">13</a></sup>.   The hooks are implemented using a rigid function naming structure and the PHP API <i>function_exists</i>.  This is quite fast for PHP to execute, although doesn't scale that well for a large number of modules.   <br />
+The output of Drupal is skinnable (as with many CMS), and that is controlled by themes.  Each module may define or utiltise its own or third party theme <sup><a href="http://robknight.org.uk/blog/2011/02/explaining-architectural-tiers-drupal/" target="_blank">14</a></sup>.  The menu module controls the routing i.e. which module implements a given URL.  As a walk through more than reference, this question <sup><a href="http://stackoverflow.com/questions/1068556/how-drupal-works" target="_blank">15</a></sup> is worth reading.  There is some notes targeted at OO people <sup><a href="https://www.drupal.org/node/547518" target="_blank">16</a></sup>, for the non-OO codebase.  As with every long-lived project, there is escalating complexity; and architects attempting to solve this effect <sup><a href="http://buytaert.net/managing-and-measuring-drupal-core-complexity" target="_blank">17</a></sup>.    There are fairly few numerical performance results; but review <sup><a href="http://www.netstudio.gr/en/blog/early-drupal-7-vs-drupal-8-performance-comparison" target="_blank">18</a></sup>.</p>
+
+<p>For some things Drupal feels like a pre permanent-internet project.  Major updates are done via tarball not git update <sup><a href="https://api.drupal.org/api/drupal/upgrade.txt/7" target="_blank">19</a></sup>.  In terms of change management, this is brittle and not Agile.  I suppose Vagrant and similar are really important if your technology background is manual <i>cp</i> and <i>tar -zxf</i> commands.  They also mention <i>patch</i>, personally I would much rather use <i>git</i> than patch, as its got better reversion, and better controls.   On the basis that earlier versions of Drupal had less test coverage; using <i>patch</i> is a very stressful solution.</p>
+
+
+<h3 id="toc5"> Testing</h3>
+<p>As I am a software engineer, I don't start using a technology; unless I can test it.  This text is avoiding Drupal8, which has proper unit tests, but is not considered useful for eCommerce yet.  Drupal people are told repeatedly “do not hack core”, as the consequences will be hard to manage in the long term.  The following text feels like Drupal occurred before my lecturers wrote their notes, so has older practices.<br />
+People do seem to realise that a big complex adaptable project may need unit tests ~ I quote “Since testing is still quite new in Drupal” <sup><a href="https://www.drupal.org/node/30109" target="_blank">20</a></sup>, they are attempting improve quality.   Testing in Drupal is complicated by the fact that there are many possible execution states <sup><a href="http://drupal.stackexchange.com/questions/97698/which-test-cases-tests-should-i-run" target="_blank">21</a></sup>, and so errors may not occur when you test.  As Drupal is a large project, they have some process <sup><a href="https://www.drupal.org/contributor-tasks/write-tests" target="_blank">22</a></sup> <sup><a href="http://colans.net/blog/how-review-drupal-code" target="_blank">23</a></sup> (the first is recent, it references Drupal8 everywhere..)</p>
+
+<p>In order to test new modules, they recommend using SimpleTest <sup><a href="http://www.simpletest.org/en/unit_test_documentation.html" target="_blank">24</a></sup> (I previously favour PHPunit), which I have looked at.  PHPunit has a better tool chain/ integration.  There are various notes saying that BDD/ outside-in functional tests should be done with their normal process (and therefore Behat).  For the content, people have created test modules which render the blocks or views <sup><a href="https://www.drupal.org/project/test_content_block" target="_blank">25</a></sup> <sup><a href="https://api.drupal.org/api/drupal/modules!block!block.test/class/BlockTestCase/7" target="_blank">26</a></sup> .   I don't know if this can be integrated into a CI tool.</p>
+
+
+</div>
+
+<div style="display:none" id="biblio">
+<hr />
+<h3><a name="biblio">Exported bibliography (UI for mobile).</a></h3>
+<p>Use jQuery to extract all &lt;SUP&gt;; inject UL, with the links, add CSS padding so can be thumbed.  Problem: Links are generated and have no meta data  look at aira attrib...</p>
+<p>Rewrite as a jQuery for reuse...</p>
+<ul>
+</ul>
+</div>
+</div>
+</article>
+</div>
+<br />
+</div>
+<fieldset class="outer_menu">
+<legend></legend>
+<div id="tinyScreen">
+<h1>biblio unit-test.</h1>
+<a class="twitterLink" href="/resource/site-chart">Sitemap</a> <a href="http://127.0.0.1/resource/rss"><img alt="RSS." src="/asset/rss-128x128" height="25" width="25"></a> Share: <a href="http://twitter.com/home?status=I+think+this+is+important+http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes" title="Share this resource on your twitter account." target="_blank"><img src="/asset/small-twitter-logo.png" alt="Share this resource on your twitter account." height="25" width="25" /></a> 
+<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes&amp;title=Notes+on+Drupal.&amp;summary=I+have+read+up+on+Drupal%2C+here+are+some+notes.&amp;source=owenberesford.me.uk" target="_blank"><img src="/asset/small-LinkedIn-logo.jpg" alt="Share this resource on your linked-in account." height="25" width="25" /></a>
+<a target="_blank" title="Share this resource over googleplus." href="https://m.google.com/app/plus/x/?v=compose&amp;content=I+think+this+is+important+http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes"><img src="/asset/gplus.png" height="25" width="25" alt="G+" /></a> 
+
+</div>
+<div id="bigScreen">
+<div class="h4_title"><header><h1>biblio unit-test.</h1></header>
+<p>There can only be one of these biblio calls per page, due the to the hidden classes.
+
+
+<p id="shareGroup"> <a href="http://127.0.0.1/resource/rss" title="Access the sites RSS feed."><img alt="RSS." src="/asset/rss-128x128" height="25" width="25"></a> Share: 
+<!-- <iframe src="http://www.facebook.com/widgets/like.php?href=http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes" ><img src="/asset/small-facebook-logo.png" alt="Share this resource on your FB account." /></iframe>  -->
+<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes&amp;title=Notes+on+Drupal.&amp;summary=I+have+read+up+on+Drupal%2C+here+are+some+notes.&amp;source=owenberesford.me.uk" title="Share this resource with your linked-in account." target="_blank"><img src="/asset/small-LinkedIn-logo.jpg" alt="Share this resource on your linked-in account." /></a>
+<a target="_blank" title="Share this resource on your twitter account." href="http://twitter.com/home?status=I+think+this+is+important+http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes"><img alt="Share this resource on your twitter account." src="/asset/small-twitter-logo.png"></a>
+<a target="_blank" title="Share this resource over googleplus." href="https://plus.google.com/share?url=http%3A%2F%2F127.0.0.1%2Fresource%2Fdrupal-notes&amp;hl=en"><img src="/asset/gplus.png" height="25" width="25" alt="G+" /></a> 
+&shy; Follow <a href="https://twitter.com/@publishowen" class="twitterLink"><img src="/asset/twitter-bird-light-25x25" alt="small twitter bluebird"> @publishowen</a> 
+</p></div>
+<nav>
+<fieldset class="h4_menu">
+<legend><a id="pageMenu">Table of Contents</a></legend>
+<ul class="h4_lean">
+<li class="h4_odd"><a href="/resource/home">Home</a></li>
+<li><a href="/resource/authenticate">Login --&gt;</a></li>
+<li class="h4_odd"><a href="/resource/search">Search --&gt;</a></li>
+<li><a href="/resource/appearance">Appearance --&gt;</a></li>
+<li class="h4_odd"><a href="/resource/translate" id="translateA">Translate --&gt;</a></li>
+<li>Audience</li>
+<li class="h4_odd">Comparison to other CMS</li>
+<li>Drupal 7 features</li>
+<li class="h4_odd">Performance</li>
+<li>Architecture</li>
+<li class="h4_odd">Testing</li>
+</ul>
+<br />
+
+</fieldset>
+</nav>
+<br />
+</div>
+</fieldset>
+
+<br class="blocker" />
+<footer>
+<div class="h4_footer"> <div class="w3cpix"><a href="http://jigsaw.w3.org/css-validator/check/referer"><img src="/asset/vcss" alt="Valid CSS!" /></a> 
+<a href="http://validator.w3.org/check?uri=referer"><img src="/asset/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" /></a> 
+My profile: <a href="http://www.linkedin.com/profile/view?id=110213562" ><img src="/asset/linkedin" alt="Look at my linked-in profile." id="linkedinpix" /></a>
+</div> Page rendered 15th of Jan, 11:24:19, Copywright &copy; 2013 Owen Beresford, <a class="" href="http://127.0.0.1/resource/contact-me#">contact me</a>.  Last modified 1420198552. <br />
+
+Read the generous <a class="" href="http://127.0.0.1/resource/licence#">licence terms</a>, if you feel the need, there is a <a class="" href="http://127.0.0.1/resource/privacy#">privacy here</a>.    View the <a class="" href="http://127.0.0.1/resource/site-chart#">site map</a> or the view source of <a class="" href="http://127.0.0.1/resource/render-source&amp;view=drupal-notes">this page</a>.  <a href="#pageMenu">Jump to menu</a>
+</div>
+</footer>
+</body>
+</html>
