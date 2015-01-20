@@ -1,0 +1,9 @@
+<!-- sample for how i'm using it, -->
+<script type="text/javascript" >
+"use strict";
+$('document').ready(function() { 
+var $id='.lotsOfWords';
+if($($id+" sup a").length==0) { $id='.halferWords'; }
+if($($id+" sup a").length>3) { $('document').biblio( {tocEdit:1, loosingElement:$id } );  }
+} );	
+</script>
