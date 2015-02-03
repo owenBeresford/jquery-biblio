@@ -41,8 +41,10 @@ These are the options that are currently supported:
 			appendList:_appendList,
 			neuterLink:_neuterLink,
 			appendTitle:_appendTitle,
+			appendSection:_appendBiblioTitle,
 			emptyList:_emptyList,
 			postList:_postList,
+			haveEmptyPage:_emptyPage
 						}
 Callbacks are functions called in the context of the BibliographyExtractor class, so may access the options hash.  They should return HTML, or perform the stated change.   If you want to override many of these, it may be faster to fork the plugin and edit the library. 
 
