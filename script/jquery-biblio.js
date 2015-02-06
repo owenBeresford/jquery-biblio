@@ -158,7 +158,7 @@ Internal items, don't touch please:
 					var $ele = $(ele);
 					var url		=$ele.attr('href');
 
-					var t=$self._extractName(url, $ele.attr('aria-label'));
+					var t=$self._extractName(url, $ele.attr('aria-label'), $ele.attr('title'));
 					// IOIO inject to alter stack, when enabled...
 					if($self.options.extendViaDownload) {
 						$self.delayedLoad[pos]=function() { _downloadExtra(pos, url); };
@@ -179,12 +179,15 @@ Internal items, don't touch please:
 		 * @access private
 	 	 * @return string
 		 */
-		BibliographyExtractor.prototype._extractName=function(raw, label) {
+		BibliographyExtractor.prototype._extractName=function(raw, label, title) {
 			if(typeof raw !=="string") {
 				throw "What ya dooin? '"+raw+"'";
 			}
 			if(label) {
 				return label;
+			}
+			if(title && title.length < this.options.wholeTitle) {
+				return title;
 			}
 			if(raw.length<this.options.wholeURL) {
 				return raw;
@@ -219,6 +222,7 @@ Internal items, don't touch please:
 		loosingElement:'.lotsOfWords',
 		tocElement:'fieldset.h4_menu > .h4_lean',
 		tocEdit:0,
+		wholeTitle:50,
 		pageInitRun:0,
 		callbacks:{
 			appendLi:_appendLi,
