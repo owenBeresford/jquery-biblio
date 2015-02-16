@@ -45,13 +45,18 @@ function test_impl() {
 	ok( typeof $unit ==='object', "Have an object" );
 // not testable, hidden type
 //	ok( $unit instanceof BibliographyExtractor, "Have correct object" );
+// var t=$self._extractName(url, $ele.text(), $ele.attr('aria-label'), $ele.attr('title'));
 
-	ok( $unit._extractName("http://www.google.com", null ) ==='google', "extract google 1" );
-	ok( $unit._extractName("http://www.google.com/rtert/fgh", null ) ==='google', "extract google 3" );
-	ok( $unit._extractName("http://www.google.com/rtert/fgh?fggfgh=fghfgh&ffgh=dgdfg", null ) ==='google', "extract google 4" );
-	ok( $unit._extractName("www.google.com", null ) ==='google', "extract google 5" );
-	ok( $unit._extractName("google.com", null ) ==='google', "extract google 6" );
-	ok( $unit._extractName("http://www.google.com", "PANDA" ) ==='PANDA', "extract google 2" );
+	ok( $unit._extractName("http://www.google.com", null, null, null ) ==='google', "extract google 1" );
+	ok( $unit._extractName("http://www.google.com/rtert/fgh", null, null, null ) ==='google', "extract google 3" );
+	ok( $unit._extractName("http://www.google.com/rtert/fgh?fggfgh=fghfgh&ffgh=dgdfg", null, null, null ) ==='google', "extract google 4" );
+	ok( $unit._extractName("www.google.com", null, null, null ) ==='google', "extract google 5" );
+	ok( $unit._extractName("google.com", null, null, null ) ==='google', "extract google 6" );
+	ok( $unit._extractName("http://www.google.com", null, "PANDA", null ) ==='PANDA', "extract google 7" );
+	ok( $unit._extractName("http://www.google.com", "PANDA", null, null ) ==='PANDA', "extract google 8" );
+	ok( $unit._extractName("http://www.google.com", "1", null, null ) ==='google', "extract google 9" );
+	ok( $unit._extractName("http://www.google.com", null, null, "title" ) ==='title', "extract google 10" );
+	ok( $unit._extractName("http://www.google.com", null, null, " " ) ==='google', "extract google 11" );
 
 	var countOL=$('#biblio ol').length;
 	var countH=$('#biblio h4').length;
