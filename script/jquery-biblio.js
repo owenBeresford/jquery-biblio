@@ -36,6 +36,7 @@ These are the options that are currently supported:
   ** selector ~ default:'sup a' ~ what to look for, WRT the links that being extracted.
   ** gainingElement ~ default:'#biblio' ~ where to add the generated OL.
   ** loosingElement ~ default:'.lotsOfWords' ~ where to look for the links (you probably don't want footer links to show up, for example)
+  ** textAsName ~ default:3 ~ if using the visible text in a link, minimum number of chars before guess its word.
   ** callbacks ~ default:{
 			appendLi:_appendLi,
 			appendList:_appendList,
@@ -158,16 +159,21 @@ Internal items, don't touch please:
 					var $ele = $(ele);
 					var url		=$ele.attr('href');
 
-					var t=$self._extractName(url, $ele.attr('aria-label'), $ele.attr('title'));
+					var name=$self._extractName(url, $ele.text(), $ele.attr('aria-label'), $ele.attr('title'));
 					// IOIO inject to alter stack, when enabled...
 					if($self.options.extendViaDownload) {
-						$self.delayedLoad[pos]=function() { _downloadExtra(pos, url); };
+						$self.delayedLoad[pos]=function() { _downloadExtra.apply(this, [pos, url]); };
 					}
-					$ul.append( cb.appendLi.apply($self, [pos, url, t]) );
+					$ul.append( cb.appendLi.apply($self, [pos, url, name]) );
 					cb.neuterLink.apply($self, [$ele.selector]);
 					});
 
 			$biblio.append($ul);
+			if(this.options.extendViaDownload) {
+				this.options.download=0;
+				this.options.ready=1;
+				this._iterate(this);
+			}
 			return true;
 		};
 
@@ -179,15 +185,18 @@ Internal items, don't touch please:
 		 * @access private
 	 	 * @return string
 		 */
-		BibliographyExtractor.prototype._extractName=function(raw, label, title) {
+		BibliographyExtractor.prototype._extractName=function(raw, text, label, title) {
 			if(typeof raw !=="string") {
 				throw "What ya dooin? '"+raw+"'";
 			}
 			if(label) {
 				return label;
 			}
-			if(title && title.length < this.options.wholeTitle) {
+			if(title && title.length > this.options.textAsName && title.length < this.options.wholeTitle) {
 				return title;
+			}
+			if(text && text.length> this.options.textAsName) {
+				return text;
 			}
 			if(raw.length<this.options.wholeURL) {
 				return raw;
@@ -206,9 +215,28 @@ Internal items, don't touch please:
 			return name;
 		};
 
+		BibliographyExtractor.prototype._iterate=function(myself) {
+// need to have a set a flag, as soon as a replace has happened can start the next
+			if(myself.options.ready) {
+				var t= myself.delayedLoad[ myself.options.download];
+				if(typeof t != 'function') {
+					if(myself.options.debug) {
+						console.log("Hit end of function pointer list.");
+					}
+					return;
+				}
+				t.apply(myself, [ ]);
+				myself.options.download++;
+			}
+			if(myself.options.debug) {
+				console.log("Flag not set, delaying 1/2 s ");
+			}
+			setTimeout(myself._iterate, 500, myself);
+		};
 
 	    return new BibliographyExtractor(el, options);
 	};
+
 
 // pls see doc header 
 	$.biblioImpl.defaultOptions = {
@@ -222,6 +250,7 @@ Internal items, don't touch please:
 		loosingElement:'.lotsOfWords',
 		tocElement:'fieldset.h4_menu > .h4_lean',
 		tocEdit:0,
+		textAsName:3,
 		wholeTitle:50,
 		pageInitRun:0,
 		callbacks:{
@@ -252,6 +281,7 @@ Internal items, don't touch please:
 			return $t.trigger();
 		} catch( $e) {
 			console.log($e);
+			console.log($e.stack);
 		}
 	};
 
@@ -278,7 +308,8 @@ Internal items, don't touch please:
 	 * @return string
 	 */
 	function _appendLi(pos, url, name) {
-		return '<li> <a href="'+url+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>';
+console.log("in appendLi() name="+name);
+		return '<li> <a href="'+url+'" id="replace'+pos+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>';
 	}
 	
 	/**
@@ -321,7 +352,7 @@ Internal items, don't touch please:
 	 */
 	function _appendTitle(offset) {
 		offset++;
-		return "<h4>Page "+offset+" references</h4>";
+		return "<h4>Page "+offset+" references.</h4>";
 	}
 	
 	/**
@@ -376,16 +407,65 @@ Internal items, don't touch please:
 	}
 
 	/**
-	 * _downloadExtra ~ NOIMPL
-	 * Would download the URL, extract any META DESCRIPTION headers, or TITLE
+	 * _downloadExtra ~ 
+	 * Download the URL, extract any META DESCRIPTION headers, or TITLE
 	 * 
-	 * @param string select 
+	 * @param int id ~ which A to update 
+	 * @param string url 
 	 * @return true
 	 */
 	function _downloadExtra(id, url) {
-		alert("No impl appending "+id+" "+url);
-	}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		this.options.ready=0;
+		this.options.currentId=id;
+		this.options.currentURL=url;
 
+		if(this.options.debug) {
+			console.log("Srtating extrernal data retreival for "+url);
+		}
+		$.ajax( {url:url, success:_extra, context:this, timeout:3000, dataType:"html"});
+		return;
+	}
+
+	function _extra(data, status, jqXHR) {
+		if(this.options.debug) {
+			console.log("Completed for "+this.options.currentURL);
+		}
+		var title=false, descrip='', date='';
+		date=jqXHR.getResponseHeader('Last-Modified') || "No date";
+		date=new Date(date);
+		date=date.getUTCFullYear() + 
+				'-' + pad( date.getUTCMonth() + 1 ) +
+                '-' + pad( date.getUTCDate() ) +
+                ' ' + pad( date.getUTCHours() );
+
+		var $data=$.parseHTML(data );
+		$data=$($data);
+// parseHTML will dump the head and body tags as they don't make sense inside a document
+// therefore you get a list of the child elements back
+// therefore need filter not find
+		title=$data.filter('title').text();
+		descrip=$data.filter("meta[name='Description']").attr('content');
+console.log($data.filter("meta [name='Description']"));
+console.log($data.filter('meta'));
+console.log($data.filter('meta').attr('content'));
+		if(descrip) {
+			$("#replace"+this.options.currentId).text("["+date+"] "+title+" ~ \""+descrip+"\"");
+		} else {
+			$("#replace"+this.options.currentId).text("["+date+"] "+title);
+		}
+		this.options.ready=1;
+	}
+
+	if(typeof pad != 'function') {
+        var pad=function(number) {
+            var r = String(number);
+            if ( r.length === 1 ) {
+                r = '0' + r;
+            }
+            return r;
+        }
+	}
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 }(jQuery));
 
