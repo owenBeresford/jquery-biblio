@@ -9,3 +9,4 @@ This doesn't pollute anything into the global namespace, but only one instance m
 Files in 3rdparty are purely to run the tests, and should not be installed to any servers.
 
 This is now pretty much the second edition, it will download extra link data depending on settings.
+I should mention CORS.
