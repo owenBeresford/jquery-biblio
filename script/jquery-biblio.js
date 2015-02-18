@@ -32,7 +32,7 @@ These are the options that are currently supported:
   ** debug ~ whether to write to console.log, or not.
   ** width ~ default: 400 ~ size to trigger the extraction.
   ** wholeURL ~ default:8 ~ how long an URL must be to be "converted" to a simpler name.
-  ** extendViaDownload ~ default:0 ~ NOIMPL yet. Attempt to download further information from the target link.
+  ** extendViaDownload ~ default:0 ~ Attempt to download further information from the target link. 0= off, 1 on button click, 2= force on page load
   ** selector ~ default:'sup a' ~ what to look for, WRT the links that being extracted.
   ** gainingElement ~ default:'#biblio' ~ where to add the generated OL.
   ** loosingElement ~ default:'.lotsOfWords' ~ where to look for the links (you probably don't want footer links to show up, for example)
@@ -52,7 +52,10 @@ Callbacks are functions called in the context of the BibliographyExtractor class
 Internal items, don't touch please:	
   ** type ~ default: 'biblio' ~ jQuery infrastructure, pls ignore.
   ** pageInitRun ~ default:0,
-
+  ** currentId
+  ** currentURL
+  ** download:0,
+  ** ready:1,
 */
 
 
@@ -120,6 +123,13 @@ Internal items, don't touch please:
 				}
 				this.options.callbacks.emptyList.apply(this, [this.options.gainingElement ]);
 				$(this.options.gainingElement).append( this.options.callbacks.appendSection.apply(this, [ ]));
+				var $self	=this; // sigh JS.
+				if(this.options.extendViaDownload==1) {
+					$('#mapper').click(function() { $self._iterate($self); } );
+				} else if(this.options.extendViaDownload==2) {
+					$('#mapper').parent().css('display', 'none');
+				}
+
 				LENGTH=$(this.options.loosingElement).length;
 				for( i=0; i<LENGTH; i++) {
 					this._build1Page(i);
@@ -160,7 +170,6 @@ Internal items, don't touch please:
 					var url		=$ele.attr('href');
 
 					var name=$self._extractName(url, $ele.text(), $ele.attr('aria-label'), $ele.attr('title'));
-					// IOIO inject to alter stack, when enabled...
 					if($self.options.extendViaDownload) {
 						$self.delayedLoad[pos]=function() { _downloadExtra.apply(this, [pos, url]); };
 					}
@@ -169,9 +178,7 @@ Internal items, don't touch please:
 					});
 
 			$biblio.append($ul);
-			if(this.options.extendViaDownload) {
-				this.options.download=0;
-				this.options.ready=1;
+			if(this.options.extendViaDownload==2) {
 				this._iterate(this);
 			}
 			return true;
@@ -215,20 +222,25 @@ Internal items, don't touch please:
 			return name;
 		};
 
+		/**
+		 * _iterate ~ delay and execute all the lambdas to populate better link information.
+		 * 
+		 * @param BibliographyExtractor myself ~ needs to be passed self, to support the setTimeout() non-OO nature.
+		 * @return <void>
+		 */
 		BibliographyExtractor.prototype._iterate=function(myself) {
 // need to have a set a flag, as soon as a replace has happened can start the next
 			if(myself.options.ready) {
 				var t= myself.delayedLoad[ myself.options.download];
 				if(typeof t != 'function') {
 					if(myself.options.debug) {
-						console.log("Hit end of function pointer list.");
+						console.log("Hit end of function pointer list, stopping.");
 					}
 					return;
 				}
 				t.apply(myself, [ ]);
 				myself.options.download++;
-			}
-			if(myself.options.debug) {
+			} else if(myself.options.debug) {
 				console.log("Flag not set, delaying 1/2 s ");
 			}
 			setTimeout(myself._iterate, 500, myself);
@@ -253,6 +265,8 @@ Internal items, don't touch please:
 		textAsName:3,
 		wholeTitle:50,
 		pageInitRun:0,
+		download:0,
+		ready:1,
 		callbacks:{
 			appendLi:_appendLi,
 			appendList:_appendList,
@@ -308,7 +322,6 @@ Internal items, don't touch please:
 	 * @return string
 	 */
 	function _appendLi(pos, url, name) {
-console.log("in appendLi() name="+name);
 		return '<li> <a href="'+url+'" id="replace'+pos+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>';
 	}
 	
@@ -341,7 +354,7 @@ console.log("in appendLi() name="+name);
 	 * @return string
 	 */
 	function _appendBiblioTitle() {
-		return "<h2 class=\"biblioSection\">References (for mobile UI)</h2> <p>Te references embedded in the text are displayed here. </p><p><strike class=\"twitterLink\">Lookup extra details</strike>.</p>";
+		return "<h2 class=\"biblioSection\">References (for mobile UI)</h2> <p>The references embedded in the text are displayed here. </p><p><a id=\"mapper\" class=\"twitterLink\">Lookup extra link details</a>.</p>";
 	}
 	
 	/**
@@ -412,7 +425,7 @@ console.log("in appendLi() name="+name);
 	 * 
 	 * @param int id ~ which A to update 
 	 * @param string url 
-	 * @return true
+	 * @return <void>
 	 */
 	function _downloadExtra(id, url) {
 		this.options.ready=0;
@@ -420,17 +433,31 @@ console.log("in appendLi() name="+name);
 		this.options.currentURL=url;
 
 		if(this.options.debug) {
-			console.log("Srtating extrernal data retreival for "+url);
+			console.log("Srtating external data retreival for "+url);
 		}
 		$.ajax( {url:url, success:_extra, context:this, timeout:3000, dataType:"html"});
 		return;
 	}
 
+	/**
+	 * _extra ~ 
+	 * The success handler, does the actual work.
+	 * 
+	 * @param string data
+	 * @param string status
+     * @param object jqXHR ~ the wrapped jQuery XHR object
+	 * @return true
+	 */
 	function _extra(data, status, jqXHR) {
+		var po=[ 
+			"No author set",  
+			"Resource doesn't set a description tag."
+			];
+
 		if(this.options.debug) {
-			console.log("Completed for "+this.options.currentURL);
+			console.log("Completed as '"+status+"' for "+this.options.currentURL);
 		}
-		var title=false, descrip='', date='';
+		var title=false, descrip='', date='', auth='';
 		date=jqXHR.getResponseHeader('Last-Modified') || "No date";
 		date=new Date(date);
 		date=date.getUTCFullYear() + 
@@ -442,20 +469,25 @@ console.log("in appendLi() name="+name);
 		$data=$($data);
 // parseHTML will dump the head and body tags as they don't make sense inside a document
 // therefore you get a list of the child elements back
-// therefore need filter not find
+// therefore need filter() not find()
 		title=$data.filter('title').text();
-		descrip=$data.filter("meta[name='Description']").attr('content');
-console.log($data.filter("meta [name='Description']"));
-console.log($data.filter('meta'));
-console.log($data.filter('meta').attr('content'));
+		descrip=$data.filter("meta[name$='escription']").attr('value');
+		if(! descrip) { descrip= $data.filter("meta[name$='escription']").attr('content'); }
+		auth=$data.filter("meta[name$='uthor']").attr('content');
+		if(! auth) { auth=po[0]; }
+
 		if(descrip) {
-			$("#replace"+this.options.currentId).text("["+date+"] "+title+" ~ \""+descrip+"\"");
+			$("#replace"+this.options.currentId).text(auth+" ["+date+"] "+title);
+			$('#replace'+this.options.currentId).append("<br />~ "+descrip);
+			$('#replace'+this.options.currentId).attr('title', descrip);
 		} else {
-			$("#replace"+this.options.currentId).text("["+date+"] "+title);
+			$("#replace"+this.options.currentId).text(auth+" ["+date+"] "+title);
+			$('#replace'+this.options.currentId).attr('title', po[1]);
 		}
 		this.options.ready=1;
 	}
 
+// add leading 0 to strings holding an int if needed.
 	if(typeof pad != 'function') {
         var pad=function(number) {
             var r = String(number);
