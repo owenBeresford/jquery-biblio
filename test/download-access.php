@@ -7,7 +7,7 @@
 <!--[if gt IE 9]><!--> <html lang="en-GB-oed" class="noJS"> <!--<![endif]-->
 <head>
 <!-- This website is written by a guy who claims to have lots of specialised technical skills, but this website only partially demonstrates them.  This website is a vehicle for about 100,000 words, please read some of them. -->
-<title>Notes on Drupal.</title>
+<title>Static UI demo 2.</title>
 <meta http-equiv="X-UA-Compatible" content="IE=9" />
 <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -66,11 +66,12 @@
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
-<script type="text/javascript" src="../script/jquery-biblio.js"></script>
+<script type="text/javascript" src="/asset/jquery-biblio-0.3.0.js"></script>
 <script type="text/javascript" >
 $(document).ready(function() {
 $('document').biblio({
 		width:1500,
+		debug:1,
 		extendViaDownload:1,
 				});
 });
@@ -83,11 +84,11 @@ $('document').biblio({
 <div class="blocker">
 <div class="lotsOfWords">
 <div class="pullout" id="notice">
-<h3>Static biblio demo.</h3> 
-I have hack this script to extract the references for all screen sizes.  This will normally only occur below a certain trigger size.  Please refer to the actual <a href="./jquery-biblio-test.html" title="Load the real unit test,">unit-test</a>, and the <a href="http://owenberesford.me.uk/resource/jquery-biblio" title="goto the dev notes article for this project." >dev notes</a> article.  
+<h3>Static biblio demo 2.</h3> 
+I have hack this script to extract the references for all screen sizes.  This will normally only occur below a certain trigger size.  Please refer to the actual <a href="./jquery-biblio-test.html" title="Load the real unit test,">unit-test</a>, and the <a href="http://owenberesford.me.uk/resource/jquery-biblio" title="goto the dev notes article for this project." >dev notes</a> article. <p>I don't have a proper unit test for the download feature, as mocking $.ajax would be a pain. The files here show you it running, and many people are likely to want to tweak the UI.
 </div>
 <p>There have been a number of iterations on Drupal.  My notes go back to Drupal6.  Drupal 7 added a few new features (please see <sup><a href="<?php echo $myurl ?>extend-download-target.php" target="_blank">1</a></sup> <sup><a href="<?php echo $myurl ?>extend-download-target.php" target="_blank">2</a></sup>); and is the “current one”.  Drupal8 breaks backwards compatibility, but has finally joined the &gt;1980s by going OO and using namespaces.  Drupal8 also supports HTML5 and mobile.  Whilst I understand inertia on big projects, I find it hard to take lack of support for these things seriously.<br />
-There is a catalogue that lists Drupal sites <sup><a href="<?php echo $myurl ?>/extend-download-target2.php" target="_blank">3</a></sup>, this is useful for looking at features for Drupal.  <sup><a href="<?php echo $myurl ?>extend-download-target2.php" target="_blank">Seasonal fluff</a></sup> that showed up on my linkedin.</p>
+There is a catalogue that lists Drupal sites <sup><a href="<?php echo $myurl ?>/extend-download-target2.php" target="_blank">3</a></sup>, this is useful for looking at features for Drupal.  <sup><a href="<?php echo $myurl ?>extend-download-target2.php" target="_blank">Seasonal fluff</a></sup> that showed up on my linkedin. <sup><a href="<?php echo $myurl ?>/extend-download-target3.php" target="_blank">404</a></sup> </p>
 
 
 
@@ -116,7 +117,7 @@ There is a catalogue that lists Drupal sites <sup><a href="<?php echo $myurl ?>/
 
 </div>
 <div id="bigScreen">
-<div class="h4_title"><header><h1>Static biblio demo.</h1></header>
+<div class="h4_title"><header><h1>Static biblio demo 2.</h1></header>
 
 
 <p id="shareGroup"> <a href="http://127.0.0.1/resource/rss" title="Access the sites RSS feed."><img alt="RSS." src="/asset/rss-128x128" height="25" width="25"></a> Share: 

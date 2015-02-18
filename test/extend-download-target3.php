@@ -5,8 +5,9 @@ echo <<<EOHTML
 <!DOCTYPE head>
 <html>
 <head>
-<title>Boring Page title #2</title>
+<title>Boring Page title #3</title>
 <meta name="Description" content="Exciting meta text!!!!1" />
+<meta name="Author" content="B Perovic" />
 </head>
 <body>
 <h1>Minimal test page to test downloading.  Contains no content.</h1>
