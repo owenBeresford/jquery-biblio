@@ -2,4 +2,10 @@
 ol.Alist { width:50%; margin-left:auto; margin-right:auto; }
 ol.Alist li a { padding:5px; display:block; text-align:center;  }
 ol.Alist li a:hover {  background-color:#C0DEED; }
+/* 
+code uses .twitterLink to be compatible with my site, this is defined as
 
+.twitterLink { background-color:#C0DEED; padding:3px; padding-top:10px; padding-right:6px; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; -o-border-radius:4px; -ms-border-radius:4px; }
+.twitterLink:hover { background-color:green; }
+.twitterLink img, #linkedinpix { width:20px; height:20px; }
+*/
