@@ -433,9 +433,15 @@ Internal items, don't touch please:
 		this.options.currentURL=url;
 
 		if(this.options.debug) {
-			console.log("Srtating external data retreival for "+url);
+			console.log("Starting external data retreival for "+url);
 		}
-		$.ajax( {url:url, success:_extra, context:this, timeout:3000, dataType:"html"});
+		try {
+			$.ajax( {url:url, success:_extra, context:this, timeout:3000, dataType:"html"});
+		} catch( e) {
+			if(this.options.debug) { // trap needed or mise people will crash
+				console.log("security exception? "+e.getMessage());
+			}
+		}
 		return;
 	}
 
