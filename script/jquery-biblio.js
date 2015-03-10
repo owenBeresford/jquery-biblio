@@ -37,6 +37,7 @@ These are the options that are currently supported:
   ** gainingElement ~ default:'#biblio' ~ where to add the generated OL.
   ** loosingElement ~ default:'.lotsOfWords' ~ where to look for the links (you probably don't want footer links to show up, for example)
   ** textAsName ~ default:3 ~ if using the visible text in a link, minimum number of chars before guess its word.
+  ** referencesCache ~ if using the single remote download option, what URL?
   ** callbacks ~ default:{
 			appendLi:_appendLi,
 			appendList:_appendList,
@@ -68,6 +69,18 @@ Internal items, don't touch please:
 		catch(e){ return false; }
 	};
 	}
+
+// add leading 0 to strings holding an int if needed.
+	if(typeof pad !== 'function') {
+        var pad=function(number) {
+            var r = String(number);
+            if ( r.length === 1 ) {
+                r = '0' + r;
+            }
+            return r;
+        }
+	}
+
 
 	/**
 	 * biblio ~ jQuery style constructor 
@@ -128,6 +141,9 @@ Internal items, don't touch please:
 					$('#mapper').click(function() { $self._iterate($self); } );
 				} else if(this.options.extendViaDownload==2) {
 					$('#mapper').parent().css('display', 'none');
+				} else if(this.options.extendViaDownload==4) {
+					$('#mapper').parent().css('display', 'none');
+					$self.downloadOne();
 				}
 
 				LENGTH=$(this.options.loosingElement).length;
@@ -138,6 +154,30 @@ Internal items, don't touch please:
 			}
 			return this;
 		};
+
+		/**
+		 * downloadOne ~ mapper for the server datacache 
+		 * 
+		 * @access private
+	 	 * @return <self>
+		 */
+		BibliographyExtractor.prototype.downloadOne =function() {
+			this.options.ready=0;
+			this.options.currentId=0;
+			this.options.currentURL='';
+
+			if(this.options.debug) {
+				console.log("Starting external data retreival for "+this.options.referencesCache);
+			}
+			try {
+				$.ajax( {url:this.options.referencesCache, success:_extraCached, context:this, timeout:3000, dataType:"json"});
+			} catch( e) {
+				if(this.options.debug) { // trap needed or mise people will crash
+					console.log("security exception? "+e.getMessage());
+				}
+			}
+			return this;
+		}
 
 		/**
 		 * _build1Page ~ actually build a OL for the current page
@@ -196,6 +236,7 @@ Internal items, don't touch please:
 			if(typeof raw !=="string") {
 				throw "What ya dooin? '"+raw+"'";
 			}
+
 			if(label) {
 				return label;
 			}
@@ -257,6 +298,7 @@ Internal items, don't touch please:
 		width:400,
 		wholeURL:8,
 		extendViaDownload:0,
+		referencesCache:'/resource/XXXreferences',
 		selector:'sup a',
 		gainingElement:'#biblio',
 		loosingElement:'.lotsOfWords',
@@ -407,6 +449,13 @@ Internal items, don't touch please:
 		return true;
 	}
 
+	/**
+	 * _hiddenLiBuilder
+	 * 
+	 * @param text $text 
+	 * @param odd $odd 
+	 * @return <self>
+	 */
 	function _hiddenLiBuilder(text, odd) {
 		var html;
 		if(odd % 2) {
@@ -493,15 +542,46 @@ Internal items, don't touch please:
 		this.options.ready=1;
 	}
 
-// add leading 0 to strings holding an int if needed.
-	if(typeof pad != 'function') {
-        var pad=function(number) {
-            var r = String(number);
-            if ( r.length === 1 ) {
-                r = '0' + r;
-            }
-            return r;
-        }
+	/**
+	 * _extraCached ~ 
+	 * The success handler, does the actual work.
+	 * Not much security on here, but its the client.
+	 * 
+	 * @param string data
+	 * @param string status
+     * @param object jqXHR ~ the wrapped jQuery XHR object
+	 * @return true
+	 */
+	function _extraCached(data, status, jqXHR) {
+		var po=[ 
+			"No author set",  
+			"Resource doesn't set a description tag."
+			];
+
+		if(this.options.debug) {
+			console.log("Completed as '"+status+"' for "+this.options.currentURL);
+		}
+console.log(data);
+		for(var i=0; i<data.length; i++) {
+
+			var date='';
+			date=data[i].date;
+			date=new Date(date);
+			date=date.getUTCFullYear() + 
+				'-' + pad( date.getUTCMonth() + 1 ) +
+				'-' + pad( date.getUTCDate() ) +
+				' ' + pad( date.getUTCHours() );
+
+			if(data[i].descrip) {
+				$("#replace"+i).text(data[i].auth+" ["+date+"] "+data[i].title);
+				$('#replace'+i).append("<br />~ "+data[i].descrip);
+				$('#replace'+i).attr('title', data[i].descrip);
+			} else {
+				$("#replace"+i).text(data[i].auth+" ["+date+"] "+data[i].title);
+				$('#replace'+i).attr('title', po[1]);
+			}
+		}
+		this.options.ready=1;
 	}
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
