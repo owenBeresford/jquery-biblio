@@ -81,6 +81,61 @@ Internal items, don't touch please:
         }
 	}
 
+	function importDate(format, day, time) {{{
+		var day1, time1, fpos, bpos;
+		var year1, month1, _day1, hour1, min1, sec1;
+
+		var tt       =day.split('T');
+		var found    =false;
+
+		if(tt.length==2) {
+			day1       =tt[0];
+			time1      =tt[1];
+			found      =true;
+		}
+
+		var tt       =day.split(' ');
+		if(!found && tt.length==2) {
+			day1       =tt[0];
+			time1      =tt[1];
+			found      =true;
+		} 
+
+		if(!found && time) {
+			day1       =day; 
+			time1      =time;
+			found      =true;
+		} else if(!found ){     
+			day1       =day;
+			time1      ='00:00:00';
+		} 
+
+		if(day1.indexOf('-') ){
+			day1       = day1.split('-');
+		}else{       
+			day1       = day1.split('/');
+		} 
+		time1        = time1.split(':');
+		for(var j =0; j<time1.length; j++) {
+			day1[day1.length]=time1[j];
+		}
+
+		fpos         = 0;
+		while(fpos<format.length) {
+			switch(format.charAt(fpos)) {
+				case 'y': { year1 = parseInt(day1[fpos], 10); break; }
+				case 'm': { month1 = parseInt(day1[fpos], 10); month1--; break; }
+				case 'd': { _day1 = parseInt(day1[fpos], 10); break; }
+				case 'h': { hour1 = parseInt(day1[fpos], 10); hour1--; break; }
+				case 'i': { min1 = parseInt(day1[fpos], 10); break; }
+				case 's': { sec1 = parseInt(day1[fpos], 10); break; }
+			}
+			fpos++;
+		}
+
+		return new Date(year1, month1, _day1, hour1, min1, sec1, 0 );
+	}}}
+
 
 	/**
 	 * biblio ~ jQuery style constructor 
@@ -170,7 +225,7 @@ Internal items, don't touch please:
 				console.log("Starting external data retreival for "+this.options.referencesCache);
 			}
 			try {
-				$.ajax( {url:this.options.referencesCache, success:_extraCached, context:this, timeout:3000, dataType:"json"});
+				$.ajax( {url:this.options.referencesCache, success:_extraCached, context:this, timeout:3000, error:function(xhr, t, e) {console.log(t+" "+e); } , dataType:"json"});
 			} catch( e) {
 				if(this.options.debug) { // trap needed or mise people will crash
 					console.log("security exception? "+e.getMessage());
@@ -515,8 +570,10 @@ Internal items, don't touch please:
 		var title=false, descrip='', date='', auth='';
 		date=jqXHR.getResponseHeader('Last-Modified') || "No date";
 		date=new Date(date);
+		var months=["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December" ];
 		date=date.getUTCFullYear() + 
-				'-' + pad( date.getUTCMonth() + 1 ) +
+				'-' +  months[date.getUTCMonth() + 1 ] +
                 '-' + pad( date.getUTCDate() ) +
                 ' ' + pad( date.getUTCHours() );
 
@@ -561,14 +618,16 @@ Internal items, don't touch please:
 		if(this.options.debug) {
 			console.log("Completed as '"+status+"' for "+this.options.currentURL);
 		}
-console.log(data);
 		for(var i=0; i<data.length; i++) {
 
 			var date='';
 			date=data[i].date;
-			date=new Date(date);
+			date=importDate('ymdhis', date);
+
+			var months=["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December" ];
 			date=date.getUTCFullYear() + 
-				'-' + pad( date.getUTCMonth() + 1 ) +
+				'-' + months[ date.getUTCMonth() + 1 ] +
 				'-' + pad( date.getUTCDate() ) +
 				' ' + pad( date.getUTCHours() );
 
