@@ -32,7 +32,7 @@ These are the options that are currently supported:
   ** debug ~ whether to write to console.log, or not.
   ** width ~ default: 400 ~ size to trigger the extraction.
   ** wholeURL ~ default:8 ~ how long an URL must be to be "converted" to a simpler name.
-  ** extendViaDownload ~ default:0 ~ Attempt to download further information from the target link. 0= off, 1 on button click, 2= force on page load
+  ** extendViaDownload ~ default:0 ~ Attempt to download further information from the target link. 0= off, 1 on button click, 2= force on page load, 4= on page load from a cache, so CORS is okay
   ** selector ~ default:'sup a' ~ what to look for, WRT the links that being extracted.
   ** gainingElement ~ default:'#biblio' ~ where to add the generated OL.
   ** loosingElement ~ default:'.lotsOfWords' ~ where to look for the links (you probably don't want footer links to show up, for example)
