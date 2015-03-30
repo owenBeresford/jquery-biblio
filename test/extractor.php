@@ -193,10 +193,11 @@ EOHTML;
 	if(isset($_POST['url']) || strlen($_POST['url'])>5) {
 		$links	=json_decode($_POST['links']);
 		$list	=array();
-		foreach($links as $v) {
+
+		foreach($links as $k=>$v) {
 			$list[]=_list($v);
 		}
-		$json=json_encode($list);	
+		$json=json_encode($list,JSON_UNESCAPED_SLASHES );	
 	
 		echo <<<EOHTML
 <!DOCTYPE html>
@@ -349,34 +350,40 @@ function _list($url) {
 	curl_setopt($c, CURLOPT_HTTPGET, true);
 	curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
 	curl_setopt($c, CURLOPT_TIMEOUT, 5);
+	curl_setopt($c, CURLOPT_HEADER, true);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 	$text=curl_exec($c);
 	if(  curl_errno($c)  ) {
-		$tt=curl_strerror( curl_errno($c))
+		$tt=curl_strerror( curl_errno($c));
 		return array(
+				'url'=>$url,
 				'descrip'=>$tt,
 				'title'=>'',
 				'auth'=>'',
 				'date'=>'',
 						);
 	}
-	$headers =curl_getinfo($c);
 
 # int preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
-	$count=preg_match('/<meta[ \\t]+name=["\']description["\'][ \\t]+value="([^"]+)"/i', $text, $matches);
+	$count=preg_match('/<meta[ \\t]+name=["\']description["\'][ \\t]+content="([^"]+)"/i', $text, $matches);
 	if($count) { 
-		$item['descrip']=$matches[1];
+		$item['descrip']=str_replace('"', '\\"', $matches[1]);
 	}
 	$count=preg_match('/<title>([^<]+)<\\/title>/i', $text, $matches);
 	if($count) { 
-		$item['title']=$matches[1];
+		$item['title']=str_replace('"', '\\"',trim($matches[1]));
 	}
-	$count=preg_match('/<meta[ \\t]+name=["\']author["\'][ \\t]+value="([^"]+)"/i', $text, $matches);
+	$count=preg_match('/<meta[ \\t]+name=["\']author["\'][ \\t]+content="([^"]+)"/i', $text, $matches);
 	if($count) { 
-		$item['auth']=$matches[1];
+		$item['auth']=str_replace('"', '\\"',$matches[1]);
 	}
 
-	$item['date']=$headers['Last-Modified'];
+	$count=preg_match('/^Last-Modified: (.+)$/m', $text, $matches);
+	if($count) { 
+		$item['date']=strtotime($matches[1]);
+	}
+
+	$item['url']= $url;
 
 /*
 				$item=array(
