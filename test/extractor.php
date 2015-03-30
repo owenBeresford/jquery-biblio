@@ -16,7 +16,7 @@ if(!function_exists('curl_init')) {
 if($_SERVER['REQUEST_METHOD']=='GET') {
 // i made the HTML, by extracting a form built by my libaries
 
-	echo <<<EOHTML
+	echo <<<'EOHTML'
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html lang="en-GB-oed" class="ie6 noJS"> <![endif]-->
 <!--[if IE 7]>         <html lang="en-GB-oed" class="ie7 noJS"> <![endif]-->
@@ -94,7 +94,7 @@ if($_SERVER['REQUEST_METHOD']=='GET') {
 <div class="fewWords">
 <p>Please enter the URL to the resource that you wish to build the index/ reference cache for.</p>
 <form method="post" name="dE" id="dE">
-<p id="nmWrapper" class=""><label for="nm" id="nmLabel" class="h4_label">URL :</label><input type="text" name="url" id="url" value="" size="150" /></p>
+<p id="nmWrapper" class=""><label for="nm" id="nmLabel" class="h4_label">URL :</label><input type="text" name="url" id="url" value="" size="50" maxlength="150" /></p>
 <input type="hidden" name="resource" id="resource" value="extractor" />
 <input type="hidden" name="links" id="links" value="" />
 <p id="btnSubmitWrapper" class=""><input type="button" name="btnSubmit" id="btnSubmit" value="fetch -->" class="h4_btn" /></p>
@@ -160,22 +160,24 @@ $(document).ready(
 
 		$('#btnSubmit').click(
 			function() {
+
 				var url=$('#url').val();
 				$.ajax( {url:url, context:this, timeout:3000, dataType:"html", success:function(data, status, jqXHR) {
+
 					var $data=$.parseHTML(data );
 					$data=$($data);
-					var list=[];					
-					$data.filter('sup a').each(
+					var list=[];
+					$data.find('sup a').each(
 						function(name, val) {
 							var $val=$(val);
 							list[list.length]=$val.attr('href');
 						}
 					);
-
-					$('#link').val(JSON.stringify(list));
+					$('#links').val(JSON.stringify(list));
 					$('#dE').attr('disabled', null);
 
-					$('#btnSubmit').submit();
+console.log("submit now");
+					$('#dE').submit();
 } });
 			}
 );
@@ -188,9 +190,9 @@ EOHTML;
 	exit(0);
 
 } else {
-	if(!isset($_POST['url']) || strlen($_POST['url'])>5) {
+	if(isset($_POST['url']) || strlen($_POST['url'])>5) {
 		$links	=json_decode($_POST['links']);
-		$list	=[];
+		$list	=array();
 		foreach($links as $v) {
 			$list[]=_list($v);
 		}
@@ -349,26 +351,27 @@ function _list($url) {
 	curl_setopt($c, CURLOPT_TIMEOUT, 5);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 	$text=curl_exec($c);
-	if($tt=curl_strerror($c)) {
+	if(  curl_errno($c)  ) {
+		$tt=curl_strerror( curl_errno($c))
 		return array(
-				'descrip'=>'',
+				'descrip'=>$tt,
 				'title'=>'',
 				'auth'=>'',
 				'date'=>'',
 						);
 	}
-	$headers =curl_getinfo();
+	$headers =curl_getinfo($c);
 
 # int preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
-	$count=preg_match('/<meta[ \t]+name=["\']description["\'][ \t]+value="([^"]+)"/i', $text, $matches);
+	$count=preg_match('/<meta[ \\t]+name=["\']description["\'][ \\t]+value="([^"]+)"/i', $text, $matches);
 	if($count) { 
 		$item['descrip']=$matches[1];
 	}
-	$count=preg_match('/<title>([^<]+)</title>/i', $text, $matches);
+	$count=preg_match('/<title>([^<]+)<\\/title>/i', $text, $matches);
 	if($count) { 
 		$item['title']=$matches[1];
 	}
-	$count=preg_match('/<meta[ \t]+name=["\']author["\'][ \t]+value="([^"]+)"/i', $text, $matches);
+	$count=preg_match('/<meta[ \\t]+name=["\']author["\'][ \\t]+value="([^"]+)"/i', $text, $matches);
 	if($count) { 
 		$item['auth']=$matches[1];
 	}
