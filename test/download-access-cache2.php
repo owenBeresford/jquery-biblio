@@ -1,4 +1,4 @@
-<?php $myurl="http://127.0.0.1:81/external/"; ?>
+<?php $myurl="http://127.0.0.1:81/external/"; $hosturl='http://127.0.0.1:81'; ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html lang="en-GB-oed" class="ie6 noJS"> <![endif]-->
 <!--[if IE 7]>         <html lang="en-GB-oed" class="ie7 noJS"> <![endif]-->
@@ -60,22 +60,24 @@
 
 }
 </style>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-1.11.1" ></script>
+<script type="text/javascript" src="/asset/es5-shim.js" ></script>
+<script type="text/javascript" src="/asset/jquery-1.11.1" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
-<script type="text/javascript" src="/asset/jquery-biblio-0.5.0.js"></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
 <script type="text/javascript" >
-$(document).ready(function() {
+function biblio_loader() {
 $('document').biblio({
 		width:1500,
 		debug:1,
-		extendViaDownload:1,
+		extendViaDownload:4,
+		referencesCache:'<?php echo $hosturl ?>/resource/drupal-notes-references'		
 				});
-});
+}
 </script>
+<script type="text/javascript" src="/asset/jquery-biblio-0.5.0.js"></script>
+<script type="text/javascript" src="/asset/correction" ></script>
+
 </head>
 <body id="body">
 <div class="h4_page">

@@ -65,18 +65,23 @@
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
-<script type="text/javascript" src="/asset/jquery-biblio-0.5.0.js"></script>
 <script type="text/javascript" >
-$(document).ready(function() {
-$('document').biblio({
+function biblio_loader() {
+try {
+$(document).biblio({
 		width:1500,
 		debug:1,
 		extendViaDownload:4,
 		referencesCache:'<?php echo $myurl?>/static.json'		
 				});
-});
+} catch($e) {
+console.log("ERROR "+$e.message);
+console.log($e.stack);
+}
+} 
 </script>
+<script type="text/javascript" src="/asset/jquery-biblio-0.5.0.js"></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
 </head>
 <body id="body">
 <div class="h4_page">
