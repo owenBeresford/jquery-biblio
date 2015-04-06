@@ -219,15 +219,15 @@ Internal items, don't touch please:
 		BibliographyExtractor.prototype.downloadOne =function() {
 			this.options.ready=0;
 			this.options.currentId=0;
-			this.options.currentURL='';
+			this.options.currentURL=this.options.referencesCache;
 
 			if(this.options.debug) {
 				console.log("Starting external data retreival for "+this.options.referencesCache);
 			}
 			try {
-				$.ajax( {url:this.options.referencesCache, success:_extraCached, context:this, timeout:3000, error:function(xhr, t, e) {console.log(t+" "+e); } , dataType:"json"});
+				$.ajax( {url:this.options.referencesCache, success:_extraCached, context:this, timeout:3000, error:function(xhr, t, e) {console.log("ERROR: "+t+" "+e); } , dataType:"json"});
 			} catch( e) {
-				if(this.options.debug) { // trap needed or mise people will crash
+				if(this.options.debug) { // trap needed or msie people will crash
 					console.log("security exception? "+e.getMessage());
 				}
 			}
@@ -560,22 +560,25 @@ Internal items, don't touch please:
 	 */
 	function _extra(data, status, jqXHR) {
 		var po=[ 
-			"No author set",  
-			"Resource doesn't set a description tag."
+			"[No author]",  
+			"Resource doesn't set a description tag.",
+			"[No date]"
 			];
 
 		if(this.options.debug) {
 			console.log("Completed as '"+status+"' for "+this.options.currentURL);
 		}
 		var title=false, descrip='', date='', auth='';
-		date=jqXHR.getResponseHeader('Last-Modified') || "No date";
-		date=new Date(date);
-		var months=["January", "February", "March", "April", "May", "June",
+		date=jqXHR.getResponseHeader('Last-Modified') || po[2];
+		if(date !== po[2]) {
+			date=new Date(date);
+			var months=["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December" ];
-		date=date.getUTCFullYear() + 
-				'-' +  months[date.getUTCMonth() + 1 ] +
-                '-' + pad( date.getUTCDate() ) +
-                ' ' + pad( date.getUTCHours() );
+			date=date.getUTCFullYear() + 
+				'-' +  months[date.getMonth() + 1 ] +
+                '-' + pad( date.getDate() ) +
+                ' ' + pad( date.getHours() );
+		}
 
 		var $data=$.parseHTML(data );
 		$data=$($data);
@@ -611,32 +614,53 @@ Internal items, don't touch please:
 	 */
 	function _extraCached(data, status, jqXHR) {
 		var po=[ 
-			"No author set",  
-			"Resource doesn't set a description tag."
+			"[No author]",  
+			"Resource doesn't set a description tag.",
+			"[No date]"
 			];
 
 		if(this.options.debug) {
 			console.log("Completed as '"+status+"' for "+this.options.currentURL);
 		}
 		for(var i=0; i<data.length; i++) {
+			if(this.options.debug>1) {
+				console.log("Looking at "+i+" which is "+data[i].url);
+			}
 
 			var date='';
 			date=data[i].date;
-			date=importDate('ymdhis', date);
+			if( Number(date)===date && date%1===0 ) {
+				date=new Date(date*1000);
+			} else if(typeof date === 'string') {
+				date=importDate('ymdhis', date);
+			} else {
+				date =po[2];
+			}
 
+			if(typeof date !== 'string') {
 			var months=["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December" ];
 			date=date.getUTCFullYear() + 
-				'-' + months[ date.getUTCMonth() + 1 ] +
-				'-' + pad( date.getUTCDate() ) +
-				' ' + pad( date.getUTCHours() );
+				'-' + months[ date.getMonth() + 1 ] +
+				'-' + pad( date.getDate() ) +
+				' ' + pad( date.getHours() );
+			}
+			var title=data[i].title;
+			title+="";
+			if(title.length>this.options.wholeTitle) {		
+				title=title.substring(0, this.options.wholeTitle )+"...";
+			}
+			var auth=data[i].auth;
+			if(!auth) {
+				auth=po[0];
+			}
 
 			if(data[i].descrip) {
-				$("#replace"+i).text(data[i].auth+" ["+date+"] "+data[i].title);
-				$('#replace'+i).append("<br />~ "+data[i].descrip);
+				$("#replace"+i).text(auth+" ["+date+"] "+title);
+				$('#replace'+i).after("<br />~ "+data[i].descrip);
 				$('#replace'+i).attr('title', data[i].descrip);
 			} else {
-				$("#replace"+i).text(data[i].auth+" ["+date+"] "+data[i].title);
+				$("#replace"+i).text(auth+" ["+date+"] "+title);
 				$('#replace'+i).attr('title', po[1]);
 			}
 		}
