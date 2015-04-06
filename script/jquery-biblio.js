@@ -569,17 +569,7 @@ Internal items, don't touch please:
 			console.log("Completed as '"+status+"' for "+this.options.currentURL);
 		}
 		var title=false, descrip='', date='', auth='';
-		date=jqXHR.getResponseHeader('Last-Modified') || po[2];
-		if(date !== po[2]) {
-			date=new Date(date);
-			var months=["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December" ];
-			date=date.getUTCFullYear() + 
-				'-' +  months[date.getMonth() + 1 ] +
-                '-' + pad( date.getDate() ) +
-                ' ' + pad( date.getHours() );
-		}
-
+		date =_dateMunge(jqXHR.getResponseHeader('Last-Modified'), po[2]);
 		var $data=$.parseHTML(data );
 		$data=$($data);
 // parseHTML will dump the head and body tags as they don't make sense inside a document
@@ -588,19 +578,42 @@ Internal items, don't touch please:
 		title=$data.filter('title').text();
 		descrip=$data.filter("meta[name$='escription']").attr('value');
 		if(! descrip) { descrip= $data.filter("meta[name$='escription']").attr('content'); }
-		auth=$data.filter("meta[name$='uthor']").attr('content');
-		if(! auth) { auth=po[0]; }
+		auth=$data.filter("meta[name$='uthor']").attr('content') || po[0];
+		var selct="#replace"+this.options.currentId;
 
 		if(descrip) {
-			$("#replace"+this.options.currentId).text(auth+" ["+date+"] "+title);
-			$('#replace'+this.options.currentId).append("<br />~ "+descrip);
-			$('#replace'+this.options.currentId).attr('title', descrip);
+			$(selct).text(auth+" ["+date+"] "+title);
+			$(selct).after("<br />~ "+descrip);
+			$(selct).attr('title', descrip);
 		} else {
-			$("#replace"+this.options.currentId).text(auth+" ["+date+"] "+title);
-			$('#replace'+this.options.currentId).attr('title', po[1]);
+			$(selct).text(auth+" ["+date+"] "+title);
+			$(selct).attr('title', po[1]);
 		}
 		this.options.ready=1;
 	}
+
+	function _dateMunge(din, ddefault) {
+		var date='';
+
+		if( Number(din)===din && din%1===0 ) {
+			date=new Date(din*1000);
+		} else if(typeof din === 'string') {
+			date=importDate('ymdhis', din);
+		} else {
+			date =ddefault;
+		}
+
+		if(typeof date !== 'string') {
+			var months=["January", "February", "March", "April", "May", "June",
+				"July", "August", "September", "October", "November", "December" ];
+			date=date.getUTCFullYear() + 
+				'-' + months[ date.getMonth() + 1 ] +
+				'-' + pad( date.getDate() ) +
+				' ' + pad( date.getHours() );
+		}
+		return date;
+	}
+
 
 	/**
 	 * _extraCached ~ 
@@ -627,41 +640,21 @@ Internal items, don't touch please:
 				console.log("Looking at "+i+" which is "+data[i].url);
 			}
 
-			var date='';
-			date=data[i].date;
-			if( Number(date)===date && date%1===0 ) {
-				date=new Date(date*1000);
-			} else if(typeof date === 'string') {
-				date=importDate('ymdhis', date);
-			} else {
-				date =po[2];
-			}
-
-			if(typeof date !== 'string') {
-			var months=["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December" ];
-			date=date.getUTCFullYear() + 
-				'-' + months[ date.getMonth() + 1 ] +
-				'-' + pad( date.getDate() ) +
-				' ' + pad( date.getHours() );
-			}
-			var title=data[i].title;
-			title+="";
+			date =_dateMunge(data[i].date, po[2]);
+			var title=data[i].title+""; // this stops errors later...
 			if(title.length>this.options.wholeTitle) {		
 				title=title.substring(0, this.options.wholeTitle )+"...";
 			}
-			var auth=data[i].auth;
-			if(!auth) {
-				auth=po[0];
-			}
+			var auth=data[i].auth || po[0];
+			var selct ="#replace"+i;
 
 			if(data[i].descrip) {
-				$("#replace"+i).text(auth+" ["+date+"] "+title);
-				$('#replace'+i).after("<br />~ "+data[i].descrip);
-				$('#replace'+i).attr('title', data[i].descrip);
+				$(selct).text(auth+" ["+date+"] "+title);
+				$(selct).after("<br />~ "+data[i].descrip);
+				$(selct).attr('title', data[i].descrip);
 			} else {
-				$("#replace"+i).text(auth+" ["+date+"] "+title);
-				$('#replace'+i).attr('title', po[1]);
+				$(selct).text(auth+" ["+date+"] "+title);
+				$(selct).attr('title', po[1]);
 			}
 		}
 		this.options.ready=1;
