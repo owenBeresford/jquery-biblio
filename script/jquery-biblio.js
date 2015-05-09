@@ -584,16 +584,18 @@ Internal items, don't touch please:
 		auth=$data.filter("meta[name$='uthor']").attr('content') || po[0];
 		descrip2=descrip;
 		if(descrip.length>this.options.limitDesc) {
-			descrip2=descrip.substr(0, this.options.iimitDesc)+"...";
+			descrip2=descrip.substr(0, this.options.limitDesc)+"...";
 		}
 		var selct="#replace"+this.options.currentId;
 
 		if(descrip) {
-			$(selct).text(auth+" ["+date+"] "+title);
-			$(selct).after("<br />~ "+descrip);
+			$(selct).text(auth+" ["+date+"] ");
+			$(selct).append("<strong>"+title+"</strong>");
+			$(selct).after("<br />~ "+descrip2);
 			$(selct).attr('title', descrip);
 		} else {
-			$(selct).text(auth+" ["+date+"] "+title);
+			$(selct).text(auth+" ["+date+"] ");
+			$(selct).append("<strong>"+title+"</strong>");
 			$(selct).attr('title', po[1]);
 		}
 		this.options.ready=1;
@@ -661,11 +663,13 @@ Internal items, don't touch please:
 					descrip=data[i].descrip.substr(0, this.options.limitDesc)+"...";
 				}
 
-				$(selct).text(auth+" ["+date+"] "+title);
-				$(selct).after("<br />~ "+data[i].descrip);
+				$(selct).text(auth+" ["+date+"] ");
+				$(selct).append("<strong>"+title+"</strong>");
+				$(selct).after("<br />~ "+descrip);
 				$(selct).attr('title', data[i].descrip);
 			} else {
-				$(selct).text(auth+" ["+date+"] "+title);
+				$(selct).text(auth+" ["+date+"] ");
+				$(selct).append("<strong>"+title+"</strong>");
 				$(selct).attr('title', po[1]);
 			}
 		}
