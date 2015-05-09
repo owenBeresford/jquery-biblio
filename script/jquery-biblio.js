@@ -200,6 +200,7 @@ Internal items, don't touch please:
 					$('#mapper').parent().css('display', 'none');
 					$self.downloadOne();
 				}
+				this.options.index=0;
 
 				LENGTH=$(this.options.loosingElement).length;
 				for( i=0; i<LENGTH; i++) {
@@ -268,7 +269,8 @@ Internal items, don't touch please:
 					if($self.options.extendViaDownload) {
 						$self.delayedLoad[pos]=function() { _downloadExtra.apply(this, [pos, url]); };
 					}
-					$ul.append( cb.appendLi.apply($self, [pos, url, name]) );
+					$ul.append( cb.appendLi.apply($self, [$self.options.index, url, name]) );
+					$self.options.index++;
 					cb.neuterLink.apply($self, [$ele.selector]);
 					});
 
@@ -364,6 +366,7 @@ Internal items, don't touch please:
 		pageInitRun:0,
 		download:0,
 		ready:1,
+		limitDesc:200,
 		callbacks:{
 			appendLi:_appendLi,
 			appendList:_appendList,
@@ -579,6 +582,10 @@ Internal items, don't touch please:
 		descrip=$data.filter("meta[name$='escription']").attr('value');
 		if(! descrip) { descrip= $data.filter("meta[name$='escription']").attr('content'); }
 		auth=$data.filter("meta[name$='uthor']").attr('content') || po[0];
+		descrip2=descrip;
+		if(descrip.length>this.options.limitDesc) {
+			descrip2=descrip.substr(0, this.options.iimitDesc)+"...";
+		}
 		var selct="#replace"+this.options.currentId;
 
 		if(descrip) {
@@ -649,6 +656,11 @@ Internal items, don't touch please:
 			var selct ="#replace"+i;
 
 			if(data[i].descrip) {
+				var descrip=data[i].descrip;
+				if(data[i].descrip.length>this.options.limitDesc) {
+					descrip=data[i].descrip.substr(0, this.options.limitDesc)+"...";
+				}
+
 				$(selct).text(auth+" ["+date+"] "+title);
 				$(selct).after("<br />~ "+data[i].descrip);
 				$(selct).attr('title', data[i].descrip);
