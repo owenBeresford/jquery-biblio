@@ -20,9 +20,9 @@
  * 
  * jquery-biblio ~ a module to extract Harvard style references from web pages, and append to a OL list at the end of the page.  Written to assist mobile users.  
  *
- * @author: Owen beresford owencanprogram@fastmail.fm
- * @version: 0.1.1
- * @date: 15/01/2015
+ * @author: Owen beresford owenberesford@users.noreply.github.com
+ * @version: 0.3.1
+ * @date: 15/03/2017
  * @licence: AGPL <http://www.gnu.org/licenses/agpl-3.0.html> 
  * 
  * deps: 
