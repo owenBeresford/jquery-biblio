@@ -422,7 +422,7 @@ Internal items, don't touch please:
 	 * @return string
 	 */
 	function _appendLi(pos, url, name) {
-		return '<li> <a href="'+url+'" id="replace'+pos+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</a> </li>';
+		return '<li> <cite href="'+url+'" id="replace'+pos+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</cite> </li>';
 	}
 	
 	/**
