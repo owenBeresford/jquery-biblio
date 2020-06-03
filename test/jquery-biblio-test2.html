@@ -16,7 +16,7 @@
 
 <link rel="stylesheet" type="text/css" href="http://owenberesford.me.uk/resource/reach-positional" />
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-1.11.1" ></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-3.1.0" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
@@ -25,6 +25,25 @@
 <script type="text/javascript" src="../3rdparty/qunit-1.11.0.js" ></script>
 <link rel="stylesheet" type="text/css" href="../3rdparty/qunit-1.11.0.css" />
 <script type="text/javascript" >
+    /**
+     * currentSize
+     * Utility function to report the tab size...
+     // I use this in debugging RWD
+
+     * @access public
+     * @return void
+     */
+    window.currentSize = function () {
+        var d = document, root = d.documentElement, body = d.body;
+        var wid = window.innerWidth || root.clientWidth || body.clientWidth;
+        var hi = window.innerHeight || root.clientHeight || body.clientHeight;
+        wid = parseInt(wid, 10);
+        hi = parseInt(hi, 10);
+        return [wid, hi];
+    };
+
+
+
 function biblio_test() {
 	return test("API test for jQuery-biblio", test_impl);	
 }
@@ -41,7 +60,7 @@ function test_impl() {
 // http://api.qunitjs.com/QUnit.config/
 	
 	ok( typeof jQuery.fn.biblio ==='function', "module loaded");
-	ok( jQuery().jquery === '1.11.1', "jquery loaded");
+	ok( jQuery().jquery === '3.1.0', "jquery loaded");
 
 // pls note this is called in a completely different fashion to the first test script
 	var countOL=$('#biblio ol').length;
@@ -78,7 +97,7 @@ $('document').ready(biblio_test);
 <div class="lotsOfWords">
 <div class="pullout" id="notice">
 <h3>Qunit biblio unit-test.</h3> 
-  Please refer to the actual <a href="./static.html" title="Load the real unit test,">static demo</a>, and the <a href="http://owenberesford.me.uk/resource/jquery-biblio" title="goto the dev notes article for this project." >dev notes</a> article.  
+  Please refer to the actual <a href="./static.html" title="Load the real unit test,">static demo</a>, and the <a href="http://owenberesford.me.uk/resource/jQuery-biblio" title="goto the dev notes article for this project." >dev notes</a> article.  
 </div>
 <p>There have been a number of iterations on Drupal.  My notes go back to Drupal6.  Drupal 7 added a few new features (please see <sup><a href="https://www.drupal.org/about/new-in-drupal-7" target="_blank">1</a></sup> ); and is the “current one”.  Drupal8 breaks backwards compatibility, but has finally joined the &gt;1980s by going OO and using namespaces.  Drupal8 also supports HTML5 and mobile.  Whilst I understand inertia on big projects, I find it hard to take lack of support for these things seriously.<br />
 There is a catalogue that lists Drupal sites <sup><a href="http://www.drupalsites.net/" target="_blank">2</a></sup>, this is useful for looking at features for Drupal.  <a href="http://blog.drupalpartners.com/a-very-merry-drupal-holiday-poem" target="_blank">Seasonal fluff</a> that showed up on my linkedin.</p>

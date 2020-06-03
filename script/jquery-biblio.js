@@ -27,10 +27,12 @@
  * 
  * deps: 
  *  jQuery must already be loaded 
- *
+ *  window.currentSize 
+
 These are the options that are currently supported:
   ** debug ~ whether to write to console.log, or not.
   ** width ~ default: 400 ~ size to trigger the extraction.
+  ** tooltip ~ default: false ~ add a hoover tooltip for desktop users, implies extendViaDownload===4
   ** wholeURL ~ default:8 ~ how long an URL must be to be "converted" to a simpler name.
   ** extendViaDownload ~ default:0 ~ Attempt to download further information from the target link. 0= off, 1 on button click, 2= force on page load, 4= on page load from a cache, so CORS is okay
   ** selector ~ default:'sup a' ~ what to look for, WRT the links that being extracted.
@@ -71,7 +73,7 @@ Internal items, don't touch please:
 	}
 
 // add leading 0 to strings holding an int if needed.
-	if(typeof pad !== 'function') {
+	if(typeof pad !== 'function') {{{
         var pad=function(number) {
             var r = String(number);
             if ( r.length === 1 ) {
@@ -79,8 +81,9 @@ Internal items, don't touch please:
             }
             return r;
         }
-	}
+	}}}
 
+// like really small version of moment, converts ascii string to Date object 
 	function importDate(format, day, time) {{{
 		var day1, time1, fpos, bpos;
 		var year1, month1, _day1, hour1, min1, sec1;
@@ -191,14 +194,14 @@ Internal items, don't touch please:
 				}
 				this.options.callbacks.emptyList.apply(this, [this.options.gainingElement ]);
 				$(this.options.gainingElement).append( this.options.callbacks.appendSection.apply(this, [ ]));
-				var $self	=this; // sigh JS.
-				if(this.options.extendViaDownload==1) {
-					$('#mapper').click(function() { $self._iterate($self); } );
+				const $SELF	=this; 
+				if(this.options.extendViaDownload===1) {
+					$('#mapper').click(function() { $SELF._iterate($SELF); } );
 				} else if(this.options.extendViaDownload==2) {
 					$('#mapper').parent().css('display', 'none');
 				} else if(this.options.extendViaDownload==4) {
 					$('#mapper').parent().css('display', 'none');
-					$self.downloadOne();
+					$SELF.downloadOne();
 				}
 				this.options.index=0;
 
@@ -207,6 +210,20 @@ Internal items, don't touch please:
 					this._build1Page(i);
 				}
 				this.options.callbacks.postList.apply(this, [this.options.gainingElement ]);
+
+			} else if (this.options.tooltip){
+				this.options.index=0;
+				if(! this.options.extendViaDownload===4) {
+					throw new Error("devs: Option tooltip=true requires extendViaDownload===4");
+				}
+				if(this.options.debug) {
+					console.log("Creating tooltips for desktop"); 
+				}
+				this.downloadOne();
+				LENGTH=$(this.options.loosingElement).length;
+				for( i=0; i<LENGTH; i++) {
+					this._build1Page(i);
+				}				
 			}
 			return this;
 		};
@@ -246,39 +263,90 @@ Internal items, don't touch please:
 			var nm		=this.options.gainingElement;
 			var loss	=this.options.loosingElement;
 			var cb		=this.options.callbacks;
-
-			var $ul		=$(cb.appendList.apply(this, [offset]));
+			var ss		="Alist";
+			if( this.options.tooltip) {
+				ss="";
+			}
+			this.$_ul	=$(cb.appendList.apply(this, [offset, ss]));
 			var $biblio =$(nm);
-			var $self	=this; // sigh JS.
+			const $SELF	=this; // sigh JS.
 			
-
 			if($($(loss)[offset]).find(this.options.selector).length==0) {
 				$biblio.append(cb.haveEmptyPage.apply(this, [offset]));
 			} else {
 				$biblio.append(cb.appendTitle.apply(this, [offset]));
 			}
+
+			$biblio.append(this.$_ul);
 // this hack via find() seems to be necessary inside this page.
 // I confirm: 1) the data is present as expected 2) the jQuery works 
 // I guess a consequence of the columnise module
 			$($(loss)[offset]).find(this.options.selector).each(function(pos, ele) {
+
 //			$( loss+':nth-child('+offset+') sup a').each(function(pos, ele) 
-					var $ele = $(ele);
-					var url		=$ele.attr('href');
+				if( $SELF.options.tooltip ) {
+					$SELF._tooltip(pos, ele);
+				} else {
+					$SELF._biblioChart(pos, ele);
+				}
+			});
 
-					var name=$self._extractName(url, $ele.text(), $ele.attr('aria-label'), $ele.attr('title'));
-					if($self.options.extendViaDownload) {
-						$self.delayedLoad[pos]=function() { _downloadExtra.apply(this, [pos, url]); };
-					}
-					$ul.append( cb.appendLi.apply($self, [$self.options.index, url, name]) );
-					$self.options.index++;
-					cb.neuterLink.apply($self, [$ele.selector]);
-					});
-
-			$biblio.append($ul);
 			if(this.options.extendViaDownload==2) {
 				this._iterate(this);
 			}
 			return true;
+		};
+
+		BibliographyExtractor.prototype._biblioChart=function(pos, ele) {
+			var $ele 	= $(ele);
+			var url		=$ele.attr('href');
+			var cb		=this.options.callbacks;
+
+			var name	=this._extractName(url, $ele.text(), $ele.attr('aria-label'), $ele.attr('title'));
+			if(this.options.extendViaDownload) {
+				this.delayedLoad[pos]=function() { _downloadExtra.apply(this, [pos, url]); };
+			}
+			this.$_ul.append( cb.appendLi.apply(this, [this.options.index, url, name]) );
+			this.options.index++;
+			cb.neuterLink.apply(this, [$ele.selector]);
+		};
+
+		BibliographyExtractor.prototype._tooltip=function(pos, ele) {
+			let $ele	=$(ele);
+			let cb		=this.options.callbacks;
+// get href from a; send to tooltip 
+			this.$_ul.append(cb.tooltip( "", $ele.attr('href'), this.options.index ));
+			$ele.attr('data_id', 'replace'+this.options.index);
+			$ele.on("mouseenter", function(e) { 
+				let msg=$("#"+e.target.getAttribute('data_id')); 
+				msg.addClass('h4display'); 
+				msg.removeClass('h4hidden'); 
+				let lnk=$(e.target);
+				let pos=lnk.offset(); 
+				if(pos.left + 450 > $(document).width() ) {
+					pos.left=$(document).width()-452; 
+				}
+				msg.attr('style', 'left:'+pos.left+"px; top:"+pos.top+"px;");
+			 	msg=$("#"+e.target.getAttribute('data_id')+" cite"); 
+                msg.attr('href', lnk.attr('href'));
+		     });
+			
+			var $made=$('#replace'+this.options.index);
+			var ff=function(e) { 
+				let msg=$("#"+e.target.getAttribute('data_id')); 
+				msg.removeClass('h4display');
+				msg.addClass('h4hidden');
+				return false;
+			};
+			$made.on("mouseleave", ff);
+			var $made=$('#go'+this.options.index);
+			$made.attr('href', $ele.attr('href'));
+			$made.attr('target', '_blank');
+			
+			var $made=$('#close'+this.options.index);
+			$made.on("click", ff);
+			$made.attr('data_id', 'replace'+this.options.index);
+			this.options.index++;
 		};
 
 		/**
@@ -362,11 +430,12 @@ Internal items, don't touch please:
 		tocElement:'fieldset.h4_menu > .h4_lean',
 		tocEdit:0,
 		textAsName:3,
+        tooltip:false,
 		wholeTitle:50,
 		pageInitRun:0,
 		download:0,
 		ready:1,
-		limitDesc:200,
+		limitDesc:150,
 		callbacks:{
 			appendLi:_appendLi,
 			appendList:_appendList,
@@ -375,7 +444,8 @@ Internal items, don't touch please:
 			appendSection:_appendBiblioTitle,
 			emptyList:_emptyList,
 			postList:_postList,
-			haveEmptyPage:_emptyPage
+			haveEmptyPage:_emptyPage,
+			tooltip:_tooltip,
 				},
 		
 	};
@@ -409,8 +479,8 @@ Internal items, don't touch please:
 	 * @param int $offset ~  which page
 	 * @return string
 	 */
-	function _appendList(offset) {
-		return "<ol id=\"aList_pg"+offset+"\" class=\"Alist\"></ol>";
+	function _appendList(offset, style) {
+		return "<ol id=\"aList_pg"+offset+"\" class=\""+style+"\"></ol>";
 	}
 
 	/**
@@ -507,6 +577,10 @@ Internal items, don't touch please:
 		return true;
 	}
 
+	function _tooltip(name, url, pos ) {
+		return '<li><div class="h4tooltip h4hidden" id="replace'+pos+'"> <div> <a id="close'+pos+'" class="button" href="#">X</a>  <a id="go'+pos+'" href="#" class="button">-&gt;</a> </div><cite href="'+url+'" title="This reference doesn\'t supply a title">'+name+' </cite> </div></li>';
+	}
+
 	/**
 	 * _hiddenLiBuilder
 	 * 
@@ -545,7 +619,7 @@ Internal items, don't touch please:
 		try {
 			$.ajax( {url:url, success:_extra, context:this, timeout:3000, dataType:"html"});
 		} catch( e) {
-			if(this.options.debug) { // trap needed or mise people will crash
+			if(this.options.debug) { // trap needed or msie5/6/8 people will crash
 				console.log("security exception? "+e.getMessage());
 			}
 		}
@@ -601,7 +675,7 @@ Internal items, don't touch please:
 		this.options.ready=1;
 	}
 
-	function _dateMunge(din, ddefault) {
+	function _dateMunge(din, ddefault, monthText) {
 		var date='';
 
 		if( Number(din)===din && din%1===0 ) {
@@ -615,10 +689,10 @@ Internal items, don't touch please:
 		if(typeof date !== 'string') {
 			var months=["January", "February", "March", "April", "May", "June",
 				"July", "August", "September", "October", "November", "December" ];
-			date=date.getUTCFullYear() + 
-				'-' + months[ date.getMonth() + 1 ] +
-				'-' + pad( date.getDate() ) +
-				' ' + pad( date.getHours() );
+			date=" "+date.getUTCFullYear() + '-' + 
+				(monthText? months[ date.getMonth() + 1 ]:pad( date.getMonth()+1) ) +
+				'-' + pad( date.getDate() ) +' ' +
+				( monthText?"":pad( date.getHours()) +':00' ) ;
 		}
 		return date;
 	}
@@ -638,7 +712,7 @@ Internal items, don't touch please:
 		var po=[ 
 			"[No author]",  
 			"Resource doesn't set a description tag.",
-			"[No date]"
+			"No date"
 			];
 
 		if(this.options.debug) {
@@ -649,13 +723,16 @@ Internal items, don't touch please:
 				console.log("Looking at "+i+" which is "+data[i].url);
 			}
 
-			date =_dateMunge(data[i].date, po[2]);
+			var date =_dateMunge(data[i].date, po[2], true), 
+				 date2 =_dateMunge(data[i].date, po[2], false);
 			var title=data[i].title+""; // this stops errors later...
-			if(title.length>this.options.wholeTitle) {		
-				title=title.substring(0, this.options.wholeTitle )+"...";
+			if(title.length>this.options.wholeTitle) {
+				if(data[i].descrip && data[i].descrip.length > 10 ) {
+					title=title.substring(0, this.options.wholeTitle )+"...";
+				}
 			}
 			var auth=data[i].auth || po[0];
-			var selct ="#replace"+i;
+			var selct ="#replace"+i+" cite";
 
 			if(data[i].descrip) {
 				var descrip=data[i].descrip;
@@ -663,13 +740,17 @@ Internal items, don't touch please:
 					descrip=data[i].descrip.substr(0, this.options.limitDesc)+"...";
 				}
 
-				$(selct).text(auth+" ["+date+"] ");
-				$(selct).append("<strong>"+title+"</strong>");
-				$(selct).after("<br />~ "+descrip);
+				$(selct).html(auth+" <time datetime=\""+date2+"\" >["+date+"]</time> ");
+				$(selct).append("<br /><strong>"+title+"</strong>");
+				if(this.options.tooltip){
+					$(selct).append("<br /> "+descrip);
+				} else {
+					$(selct).after("<br />~ "+descrip);
+				}
 				$(selct).attr('title', data[i].descrip);
 			} else {
 				$(selct).text(auth+" ["+date+"] ");
-				$(selct).append("<strong>"+title+"</strong>");
+				$(selct).append("<br /><strong>"+title+"</strong>");
 				$(selct).attr('title', po[1]);
 			}
 		}

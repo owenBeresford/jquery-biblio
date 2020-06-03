@@ -2,8 +2,18 @@
 ol.Alist { width:50%; margin-left:auto; margin-right:auto; }
 ol.Alist li a { padding:5px; display:block; text-align:center;  }
 ol.Alist li a:hover {  background-color:#C0DEED; }
+.h4hidden { display:none; }
+.h4display { display:block; position:absolute; }
+.h4tooltip { width:450px; height:100px; z-index:3; background-color:#e6e6e6; border:black 1px solid;  }
+.h4tooltip cite { margin:0.3em; padding-left:0.7em; font-weight: normal; }
+.h4tooltip cite:hover { background-color:#ededed; }
+.h4tooltip div { margin:0.3em;  padding-right:1em; text-align:right; background-color:#ededed; }
+.h4tooltip div:hover { background-color:#efefef; }
+.h4tooltip div a { margin:0.5em; }
+
 /* 
 code uses .twitterLink to be compatible with my site, this is defined as
+and foundation .button, which is abit large to reference here...
 
 .twitterLink { background-color:#C0DEED; padding:3px; padding-top:10px; padding-right:6px; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; -o-border-radius:4px; -ms-border-radius:4px; }
 .twitterLink:hover { background-color:green; }

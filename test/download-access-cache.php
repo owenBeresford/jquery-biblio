@@ -61,7 +61,7 @@
 }
 </style>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-1.11.1" ></script>
+<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-3.1.0" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
@@ -91,7 +91,7 @@ console.log($e.stack);
 <div class="lotsOfWords">
 <div class="pullout" id="notice">
 <h3>Static biblio demo 2.</h3> 
-I have hack this script to extract the references for all screen sizes.  This will normally only occur below a certain trigger size.  Please refer to the actual <a href="./jquery-biblio-test.html" title="Load the real unit test,">unit-test</a>, and the <a href="http://owenberesford.me.uk/resource/jquery-biblio" title="goto the dev notes article for this project." >dev notes</a> article. <p>I don't have a proper unit test for the download feature, as mocking $.ajax would be a pain. The files here show you it running, and many people are likely to want to tweak the UI.
+I have hack this script to extract the references for all screen sizes.  This will normally only occur below a certain trigger size.  Please refer to the actual <a href="./jquery-biblio-test.html" title="Load the real unit test,">unit-test</a>, and the <a href="http://owenberesford.me.uk/resource/jQuery-biblio" title="goto the dev notes article for this project." >dev notes</a> article. <p>I don't have a proper unit test for the download feature, as mocking $.ajax would be a pain. The files here show you it running, and many people are likely to want to tweak the UI.
 </div>
 <p>There have been a number of iterations on Drupal.  My notes go back to Drupal6.  Drupal 7 added a few new features (please see <sup><a href="<?php echo $myurl ?>extend-download-target.php" target="_blank">1</a></sup> <sup><a href="<?php echo $myurl ?>extend-download-target.php" target="_blank">2</a></sup>); and is the “current one”.  Drupal8 breaks backwards compatibility, but has finally joined the &gt;1980s by going OO and using namespaces.  Drupal8 also supports HTML5 and mobile.  Whilst I understand inertia on big projects, I find it hard to take lack of support for these things seriously.<br />
 There is a catalogue that lists Drupal sites <sup><a href="<?php echo $myurl ?>/extend-download-target2.php" target="_blank">3</a></sup>, this is useful for looking at features for Drupal.  <sup><a href="<?php echo $myurl ?>extend-download-target2.php" target="_blank">Seasonal fluff</a></sup> that showed up on my linkedin. <sup><a href="<?php echo $myurl ?>/extend-download-target3.php" target="_blank">404</a></sup> </p>

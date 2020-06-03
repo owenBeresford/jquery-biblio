@@ -14,16 +14,16 @@
 <meta name="Author" content="Owen Beresford" />
 <meta name="Description" content="I have read up on Drupal, here are some notes." />
 
-<link rel="stylesheet" type="text/css" href="http://owenberesford.me.uk/resource/reach-positional" />
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-3.1.0" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.columniser"></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-wresize-0.1.1"></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
-<script type="text/javascript" src="../script/jquery-biblio.js"></script>
-<script type="text/javascript" src="../3rdparty/qunit-1.11.0.js" ></script>
-<link rel="stylesheet" type="text/css" href="../3rdparty/qunit-1.11.0.css" />
+<link rel="stylesheet" type="text/css" href="/resource/reach-positional" />
+<link rel="stylesheet" type="text/css" href="/asset/jquery-biblio-beta.css" />
+<script type="text/javascript" src="/asset/es5-shim.js" ></script>
+<script type="text/javascript" src="/asset/jquery-3.1.0" ></script>
+<script type="text/javascript" src="/asset/jquery-ui.min" ></script>
+<script type="text/javascript" src="/asset/jquery.columniser"></script>
+<script type="text/javascript" src="/asset/jquery-wresize-0.1.1"></script>
+<script type="text/javascript" src="/asset/jquery-biblio-beta.js"></script>
+<script type="text/javascript" src="/external/qunit-1.11.0.js" ></script>
+<link rel="stylesheet" type="text/css" href="/external/qunit-1.11.0.css" />
 <script type="text/javascript" >
 
     /**
@@ -43,8 +43,6 @@
         return [wid, hi];
     };
 
-
-
 function biblio_test() {
 	return test("API test for jQuery-biblio", test_impl);	
 }
@@ -52,16 +50,19 @@ function biblio_test() {
 function test_impl() {
 	"use strict";
 	var opts={
-			debug:1,	
+			debug:1,
+			extendViaDownload:4,
+			referencesCache:"/resource/drupal-notes-references",
+			tooltip:true,
 				};
-	expect(24);
+	expect(23);
 // add config from here
 // http://api.qunitjs.com/QUnit.config/
 	
 	ok( typeof jQuery.fn.biblio ==='function', "module loaded");
 	ok( jQuery().jquery === '3.1.0', "jquery loaded");
 
-	var $unit = jQuery.biblioImpl( opts);
+	var $unit = jQuery.biblioImpl($, opts);
 	ok( typeof $unit ==='object', "Have an object" );
 // not testable, hidden type
 //	ok( $unit instanceof BibliographyExtractor, "Have correct object" );
@@ -94,12 +95,10 @@ function test_impl() {
 
 	var countOL=$('#biblio ol').length;
 	var countH=$('#biblio h4').length;
-// this should wipe earlier occurrences, when it runs
-	ok($unit.trigger(), "this should do nothing (wrong size)" ); 
 
 	$unit = undefined;
 	opts.width=1500;
-	$unit = jQuery.biblioImpl( opts);
+	$unit = jQuery.biblioImpl($, opts);
 	ok( typeof $unit ==='object', "Have an object" );
 	ok($unit.trigger(), "Should add columns" ); 
 // further tests are best done via the static demo.

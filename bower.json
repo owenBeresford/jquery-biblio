@@ -1,8 +1,8 @@
 {
   "name": "jquery-biblio",
   "version": "1.2.0",
-  "homepage": "https://github.com/owenBeresford/jquery-biblio",
-  "description": "A plugin to extract harvard stye embedded references, and display as an OL at the end of the document.",
+  "homepage": "https://github.com/owenBeresford/jQuery-biblio",
+  "description": "A plugin to extract harvard style embedded references, and display as an OL at the end of the document; OR display a explainy popup.",
   "main": "jquery-biblio.js",
   "license": "Affero GPL"
 }
