@@ -195,6 +195,7 @@ Internal items, don't touch please:
 				this.options.callbacks.emptyList.apply(this, [this.options.gainingElement ]);
 				$(this.options.gainingElement).append( this.options.callbacks.appendSection.apply(this, [ ]));
 				const $SELF	=this; 
+				this.options.tooltip=0;
 				if(this.options.extendViaDownload===1) {
 					$('#mapper').click(function() { $SELF._iterate($SELF); } );
 				} else if(this.options.extendViaDownload==2) {
@@ -263,17 +264,17 @@ Internal items, don't touch please:
 			var nm		=this.options.gainingElement;
 			var loss	=this.options.loosingElement;
 			var cb		=this.options.callbacks;
-			var ss		="Alist";
 			if( this.options.tooltip) {
-				ss="";
+				this.$_ul	=$("<div></div>");
+			} else {
+				this.$_ul	=$(cb.appendList.apply(this, [offset, "Alist"]));
 			}
-			this.$_ul	=$(cb.appendList.apply(this, [offset, ss]));
 			var $biblio =$(nm);
 			const $SELF	=this; // sigh JS.
 			
 			if($($(loss)[offset]).find(this.options.selector).length==0) {
 				$biblio.append(cb.haveEmptyPage.apply(this, [offset]));
-			} else {
+			} else if (! this.options.tooltip) {
 				$biblio.append(cb.appendTitle.apply(this, [offset]));
 			}
 
@@ -341,8 +342,11 @@ Internal items, don't touch please:
 			$made.on("mouseleave", ff);
 			var $made=$('#go'+this.options.index);
 			$made.attr('href', $ele.attr('href'));
+			$made.attr('data_id', 'replace'+this.options.index);
 			$made.attr('target', '_blank');
-			
+			$made.on("click", function(e) { ff(e); }); 
+			// extra wrapper to loose the return false
+
 			var $made=$('#close'+this.options.index);
 			$made.on("click", ff);
 			$made.attr('data_id', 'replace'+this.options.index);
@@ -446,8 +450,7 @@ Internal items, don't touch please:
 			postList:_postList,
 			haveEmptyPage:_emptyPage,
 			tooltip:_tooltip,
-				},
-		
+				},		
 	};
 	
 	/**
@@ -492,7 +495,7 @@ Internal items, don't touch please:
 	 * @return string
 	 */
 	function _appendLi(pos, url, name) {
-		return '<li> <cite href="'+url+'" id="replace'+pos+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</cite> </li>';
+		return '<li id="replace'+pos+'"> <cite href="'+url+'" title="Link to external site (sorry this text is generated, I don\'t have any meta data.)">'+name+'</cite> </li>';
 	}
 	
 	/**
@@ -515,7 +518,6 @@ Internal items, don't touch please:
 	function _emptyPage(select) {
 		return "<p>["+select+"] There are no references on this section.</p>";
 	}
-
 
 	/**
 	 * _appendBiblioTitle ~ generate the H4 HTML
@@ -578,7 +580,7 @@ Internal items, don't touch please:
 	}
 
 	function _tooltip(name, url, pos ) {
-		return '<li><div class="h4tooltip h4hidden" id="replace'+pos+'"> <div> <a id="close'+pos+'" class="button" href="#">X</a>  <a id="go'+pos+'" href="#" class="button">-&gt;</a> </div><cite href="'+url+'" title="This reference doesn\'t supply a title">'+name+' </cite> </div></li>';
+		return '<div class="h4tooltip h4hidden" id="replace'+pos+'"> <div><div class="h4label">Reference popup</div> <a id="close'+pos+'" title="Cancel popup." class="button" href="#">&#215;</a>  <a id="go'+pos+'" href="#" title="Open the linked resource." class="button">&#8658;</a> </div><cite href="'+url+'" title="This reference doesn\'t supply a title">'+name+' </cite> </div>';
 	}
 
 	/**
@@ -687,8 +689,8 @@ Internal items, don't touch please:
 		}
 
 		if(typeof date !== 'string') {
-			var months=["January", "February", "March", "April", "May", "June",
-				"July", "August", "September", "October", "November", "December" ];
+			var months=["Jan", "Feb", "March", "April", "May", "June",
+				"July", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 			date=" "+date.getUTCFullYear() + '-' + 
 				(monthText? months[ date.getMonth() + 1 ]:pad( date.getMonth()+1) ) +
 				'-' + pad( date.getDate() ) +' ' +
@@ -696,7 +698,6 @@ Internal items, don't touch please:
 		}
 		return date;
 	}
-
 
 	/**
 	 * _extraCached ~ 
