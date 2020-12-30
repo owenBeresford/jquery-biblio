@@ -692,7 +692,7 @@ Internal items, don't touch please:
 			var months=["Jan", "Feb", "March", "April", "May", "June",
 				"July", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 			date=" "+date.getUTCFullYear() + '-' + 
-				(monthText? months[ date.getMonth() + 1 ]:pad( date.getMonth()+1) ) +
+				(monthText? months[ date.getMonth() ]:pad( date.getMonth()+1) ) +
 				'-' + pad( date.getDate() ) +' ' +
 				( monthText?"":pad( date.getHours()) +':00' ) ;
 		}
