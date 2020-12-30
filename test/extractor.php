@@ -157,10 +157,43 @@ $(document).ready(
 // do not write code like this, its crap.
 	function() {
 		$('#dE').attr('disabled', 'disabled');
+		const setupHTML=function(data, status, jqXHR) {
+			var $data=$.parseHTML(data );
+			$data=$($data);
+			var list=[];
+			$data.find('sup a').each(
+				function(name, val) {
+					var $val=$(val);
+					list.push($val.attr('href'));
+				}
+			);
+			$('#links').val(JSON.stringify(list));
+			$('#dE').attr('disabled', null);
+			$('#dE').submit();	
+		},
+		setupJSON=function(data, status, jqXHR) {
+			var list=[];
+			for(let i in data ) {
+		//		list.push("http://owenberesford.me.uk/resource/"+data[i] );
+				list.push("http://127.0.0.1/resource/"+data[i] );
+			}
+			$('#links').val(JSON.stringify(list));
+			$('#dE').attr('disabled', null);
+			$('#dE').submit();	
+		};
 
 		$('#btnSubmit').click(
 			function() {
+				var url=$('#url').val(), isMeta=url.indexOf('-meta')>5 || url.indexOf('.shadow')>5;
+				$.ajax( {
+					url:url, 
+					context:this, 
+					timeout:3100, 
+					dataType:isMeta?"json":"html", 
+					success:isMeta?setupJSON:setupHTML
+				 });
 
+/*
 				var url=$('#url').val();
 				$.ajax( {url:url, context:this, timeout:3000, dataType:"html", success:function(data, status, jqXHR) {
 
@@ -170,7 +203,7 @@ $(document).ready(
 					$data.find('sup a').each(
 						function(name, val) {
 							var $val=$(val);
-							list[list.length]=$val.attr('href');
+							list.push($val.attr('href'));
 						}
 					);
 					$('#links').val(JSON.stringify(list));
@@ -179,6 +212,7 @@ $(document).ready(
 console.log("submit now");
 					$('#dE').submit();
 } });
+*/
 			}
 );
 	}
@@ -217,7 +251,6 @@ EOHTML;
 <meta name="Author" content="Owen Beresford" />
 <meta name="Description" content="Read an exciting article on my site." />
 
-<link rel="stylesheet" type="text/css" href="http://owenberesford.me.uk/resource/reach-positional" />
 <style type="text/css">
 /* I am told there are issues with IE and the force-media-queries-to-work script if this isn't in the main page. */
 @media screen and (max-width:1000px) {
@@ -263,9 +296,7 @@ EOHTML;
 </style>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/es5-shim.js" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-1.11.1" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery.validate" ></script>
 <script type="text/javascript" src="http://owenberesford.me.uk/asset/jquery-ui.min" ></script>
-<script type="text/javascript" src="http://owenberesford.me.uk/asset/correction" ></script>
 
 </head>
 <body id="body">
@@ -349,15 +380,15 @@ function _list($url) {
 	curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($c, CURLOPT_HTTPGET, true);
 	curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt($c, CURLOPT_TIMEOUT, 5);
+	curl_setopt($c, CURLOPT_TIMEOUT, 31);
 	curl_setopt($c, CURLOPT_HEADER, true);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 	$text=curl_exec($c);
 	if(  curl_errno($c)  ) {
 		$tt=curl_strerror( curl_errno($c));
 		return array(
-				'url'=>$url,
-				'descrip'=>$tt,
+				'url'=>str_replace("127.0.0.1", "owenberesford.me.uk", $url),
+				'descrip'=>str_replace('"', '', html_entity_decode($tt)),
 				'title'=>'',
 				'auth'=>'',
 				'date'=>'',
@@ -367,32 +398,35 @@ function _list($url) {
 # int preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
 	$count=preg_match('/<meta[ \\t]+name=["\']description["\'][ \\t]+content="([^"]+)"/i', $text, $matches);
 	if($count) { 
-		$item['descrip']=str_replace('"', '\\"', $matches[1]);
+		$item['descrip']=str_replace(['"', '&quot;'], ['', ''], html_entity_decode($matches[1]));
+	} else {
+		$tt=explode('/', $url);
+		if(count($tt) >1) {
+			$item['descrip']=end($tt);
+		}
 	}
 	$count=preg_match('/<title>([^<]+)<\\/title>/i', $text, $matches);
 	if($count) { 
-		$item['title']=str_replace('"', '\\"',trim($matches[1]));
+		$item['title']=str_replace('"', '\'', trim($matches[1]));
+	} else {
+		$tt=explode('/', $url);
+		if(count($tt) >1) {
+			$item['title']=end($tt);
+		}
+
 	}
 	$count=preg_match('/<meta[ \\t]+name=["\']author["\'][ \\t]+content="([^"]+)"/i', $text, $matches);
 	if($count) { 
-		$item['auth']=str_replace('"', '\\"',$matches[1]);
+		$item['auth']=str_replace('"', '\'', $matches[1]);
 	}
 
-	$count=preg_match('/^Last-Modified: (.+)$/m', $text, $matches);
+	$count=preg_match('/^Last-Modified: (.+)$/im', $text, $matches);
 	if($count) { 
 		$item['date']=strtotime($matches[1]);
 	}
 
 	$item['url']= $url;
 
-/*
-				$item=array(
-				'descrip'=>'',
-				'title'=>'',
-				'auth'=>'',
-				'date'=>'',
-						);
-*/
 	return $item;
 }
 
